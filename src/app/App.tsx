@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { getDOB } from "../lib/storage";
+import { getDOB, getExpectancy } from "../lib/storage";
 import { computeStats } from "../lib/stats";
 import { ageBreakdown } from "../lib/date";
 import OnboardingModal from "../components/OnboardingModal/OnboardingModal";
@@ -10,11 +10,14 @@ import ThemeToggle from "../components/ThemeToggle";
 import styles from "./App.module.css";
 
 export default function App() {
+  // estado inicial desde storage
   const [dobISO, setDobISO] = useState<string | null>(getDOB());
+  const [expectancy, setExpectancy] = useState<number>(getExpectancy());
 
+  // calcular stats solo si hay DOB
   const stats = useMemo(
-    () => (dobISO ? computeStats(dobISO, 80) : null),
-    [dobISO]
+    () => (dobISO ? computeStats(dobISO, expectancy) : null),
+    [dobISO, expectancy]
   );
   const age = useMemo(() => (dobISO ? ageBreakdown(dobISO) : null), [dobISO]);
 
@@ -22,7 +25,14 @@ export default function App() {
     <div className={styles.app}>
       <ThemeToggle />
       {!dobISO ? (
-        <OnboardingModal onConfirmed={(iso) => setDobISO(iso)} />
+        // el modal ahora también guarda la expectativa de vida
+        <OnboardingModal
+          onConfirmed={(iso) => {
+            setDobISO(iso);
+            // aseguramos leer la expectativa que el modal guardó (o 80 por defecto)
+            setExpectancy(getExpectancy());
+          }}
+        />
       ) : (
         <>
           <header className={styles.header}>
@@ -31,16 +41,20 @@ export default function App() {
           </header>
 
           <SummaryBar stats={stats!} age={age!} />
-          <LifeGrid birthDateISO={dobISO} years={80} />
+          <LifeGrid birthDateISO={dobISO} years={expectancy} />
           <Legend />
 
           <footer className={styles.footer}>
             <small>
-              {/* <a
+              <a
                 href="#reset"
                 onClick={(e) => {
                   e.preventDefault();
-                  if (window.confirm("Are you sure you want to clear your saved date?")) {
+                  if (
+                    window.confirm(
+                      "Are you sure you want to clear your saved data?"
+                    )
+                  ) {
                     localStorage.removeItem("lifeweeks.v1");
                     window.location.reload();
                   }
@@ -48,7 +62,7 @@ export default function App() {
                 style={{ opacity: 0.5 }}
               >
                 Reset (hidden)
-              </a> */}
+              </a>
             </small>
           </footer>
         </>

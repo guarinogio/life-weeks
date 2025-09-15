@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { parseDMYToISO } from "../../lib/date";
-import { setDOB } from "../../lib/storage";
+import { setDOB, setExpectancy } from "../../lib/storage";
 import styles from "./OnboardingModal.module.css";
 
 interface Props {
@@ -28,26 +28,36 @@ export default function OnboardingModal({ onConfirmed }: Props) {
   const [day, setDay] = useState("");
   const [month, setMonth] = useState("");
   const [year, setYear] = useState("");
+  const [expectancy, setExpectancyState] = useState<string>("80"); // as string for input
   const [accepted, setAccepted] = useState(false);
 
   const dayRef = useRef<HTMLInputElement>(null);
   const monthRef = useRef<HTMLInputElement>(null);
   const yearRef = useRef<HTMLInputElement>(null);
+  const expRef = useRef<HTMLInputElement>(null);
 
   const dmy = `${pad2(day)}/${pad2(month)}/${year}`;
   const isComplete = day.length === 2 && month.length === 2 && year.length === 4;
 
-  // ⤵️ validate with 80-year cap
+  // validate date with 80-year cap (already required)
   const iso = useMemo(
     () => (isComplete ? parseDMYToISO(dmy, 80) : null),
     [dmy, isComplete]
   );
-  const isValid = !!iso;
+  const isValidDOB = !!iso;
+
+  // expectancy validation 60–110 (integer)
+  const expNum = Number(expectancy);
+  const isValidExp =
+    /^\d+$/.test(expectancy) && expNum >= 60 && expNum <= 110;
+
+  const canSubmit = isValidDOB && isValidExp && accepted;
 
   useEffect(() => {
     dayRef.current?.focus();
   }, []);
 
+  // Date handlers
   const onDayChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const v = onlyDigits(e.target.value).slice(0, 2);
     setDay(v);
@@ -61,6 +71,7 @@ export default function OnboardingModal({ onConfirmed }: Props) {
   const onYearChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const v = onlyDigits(e.target.value).slice(0, 4);
     setYear(v);
+    if (v.length === 4) expRef.current?.focus();
   };
 
   const onDayKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -89,7 +100,7 @@ export default function OnboardingModal({ onConfirmed }: Props) {
     setDay(parts.d);
     setMonth(parts.m);
     setYear(parts.y);
-    if (parts.y.length === 4) yearRef.current?.focus();
+    if (parts.y.length === 4) expRef.current?.focus();
     else if (parts.m.length === 2) yearRef.current?.focus();
     else monthRef.current?.focus();
   };
@@ -97,10 +108,20 @@ export default function OnboardingModal({ onConfirmed }: Props) {
   const onDayBlur = () => setDay((v) => pad2(v));
   const onMonthBlur = () => setMonth((v) => pad2(v));
 
+  // expectancy handlers
+  const onExpChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const digits = onlyDigits(e.target.value).slice(0, 3);
+    setExpectancyState(digits);
+  };
+
   function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!isValid || !accepted) return;
+    if (!canSubmit) return;
+
+    // persist settings
     setDOB(iso!);
+    setExpectancy(Number(expectancy) || 80);
+
     onConfirmed(iso!);
   }
 
@@ -159,6 +180,25 @@ export default function OnboardingModal({ onConfirmed }: Props) {
             />
           </div>
 
+          <div className={styles.expRow}>
+            <label htmlFor="expectancy">Life expectancy (years)</label>
+            <input
+              id="expectancy"
+              ref={expRef}
+              className={styles.inputExp}
+              inputMode="numeric"
+              placeholder="80"
+              value={expectancy}
+              onChange={onExpChange}
+              maxLength={3}
+              aria-invalid={!isValidExp}
+            />
+            <small className={styles.hint}>Allowed range: 60–110</small>
+            {!isValidExp && (
+              <p className={styles.error}>Enter a value between 60 and 110.</p>
+            )}
+          </div>
+
           <label className={styles.check}>
             <input
               type="checkbox"
@@ -172,13 +212,13 @@ export default function OnboardingModal({ onConfirmed }: Props) {
           <button
             className={styles.primary}
             type="submit"
-            disabled={!isValid || !accepted}
-            aria-disabled={!isValid || !accepted}
+            disabled={!canSubmit}
+            aria-disabled={!canSubmit}
           >
             Confirm
           </button>
 
-          {!isValid && isComplete && (
+          {!isValidDOB && isComplete && (
             <p className={styles.error}>
               Invalid date. Users must be 80 years old or younger.
             </p>

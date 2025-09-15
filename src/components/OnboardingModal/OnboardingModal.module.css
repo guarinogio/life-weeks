@@ -33,7 +33,7 @@
   color: var(--c-text-muted);
 }
 
-/* --- Date segmented input --- */
+/* Date segmented input */
 .dateRow {
   display: inline-flex;
   align-items: center;
@@ -62,11 +62,11 @@
 }
 
 .segment {
-  width: 2.2em; /* fits two digits */
+  width: 2.2em;
 }
 
 .segmentYear {
-  width: 3.6em; /* fits four digits */
+  width: 3.6em;
 }
 
 .sep {
@@ -79,7 +79,33 @@
   border-color: var(--c-accent);
 }
 
-/* --- Checkbox + buttons --- */
+/* Expectancy block */
+.expRow {
+  display: grid;
+  gap: 6px;
+}
+
+.expRow label {
+  font-size: 12px;
+  color: var(--c-text-muted);
+}
+
+.inputExp {
+  width: 120px;
+  padding: 8px 10px;
+  background: var(--c-input);
+  color: var(--c-text);
+  border: 1px solid var(--c-border);
+  border-radius: 8px;
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+.hint {
+  color: var(--c-text-muted);
+  font-size: 12px;
+}
+
 .check {
   display: flex;
   align-items: center;
