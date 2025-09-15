@@ -10,8 +10,7 @@
 .scroller {}
 
 /* Dos columnas: etiqueta de año + contenido
-   -> SIN column-gap (el gap arruina el sticky);
-   la separación se aplica como padding-right en el label. */
+   -> SIN column-gap; separación con padding-right en label. */
 .headerRow,
 .row {
   display: grid;
@@ -41,8 +40,8 @@
 .weekMinor { opacity: 0.6; }
 .weekMajor { opacity: 1; font-weight: 500; }
 
+/* Mantiene espacio en móviles para no amontonar */
 @media (max-width: 700px) {
-  /* oculta visualmente los intermedios PERO mantiene su ancho */
   .weekMinor { visibility: hidden; }
 }
 
@@ -87,7 +86,6 @@
     position: relative;
   }
 
-  /* columnas de ancho fijo para scroll horizontal */
   .weekHeader {
     grid-template-columns: repeat(52, var(--cell-d));
   }
@@ -104,16 +102,16 @@
   .headerLabel {
     position: sticky;
     left: 0;
-    z-index: 6;                       /* encima de los puntos y cabecera */
+    z-index: 6;
     box-shadow: 1px 0 0 var(--c-grid);
     background: var(--c-bg);
   }
 
-  /* Fila superior (números de semana) SIEMPRE visible */
+  /* Fila superior SIEMPRE visible */
   .headerRow {
     position: sticky;
     top: 0;
-    z-index: 7;                       /* por encima de la columna sticky */
+    z-index: 7;
     background: var(--c-bg);
     box-shadow: 0 1px 0 var(--c-grid);
   }

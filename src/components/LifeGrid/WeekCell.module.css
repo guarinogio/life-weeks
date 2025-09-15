@@ -1,26 +1,26 @@
 .cell {
-  display: inline-block;
-  width: 100%;          /* se adapta a la columna 1fr */
-  aspect-ratio: 1 / 1;  /* círculo perfecto */
+  inline-size: clamp(8px, 1.1vw, 16px);
+  block-size: clamp(8px, 1.1vw, 16px);
   border-radius: 50%;
   border: 1px solid var(--c-future);
   background: transparent;
-  outline: none;
-}
 
+  /* Transiciones suaves (tema/estado) */
+  transition: background-color 180ms ease, border-color 180ms ease;
+}
 .past {
   background: var(--c-past);
   border-color: var(--c-past);
 }
-
 .current {
   background: var(--c-current);
   border-color: var(--c-current);
-  box-shadow: 0 0 0 2px color-mix(in oklab, var(--c-current) 40%, transparent);
+}
+.future {
+  background: transparent;
+  border-color: var(--c-future);
 }
 
-.future { /* solo borde */ }
-
-.cell:focus-visible {
-  box-shadow: 0 0 0 3px color-mix(in oklab, var(--c-accent) 30%, transparent);
+@media (prefers-reduced-motion: reduce) {
+  .cell { transition: none; }
 }

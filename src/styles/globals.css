@@ -1,6 +1,4 @@
-html,
-body,
-#root {
+html, body, #root {
   height: 100%;
 }
 
@@ -8,11 +6,7 @@ body {
   margin: 0;
   background: var(--c-bg);
   color: var(--c-text);
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
+a { color: inherit; }
+* { box-sizing: border-box; }

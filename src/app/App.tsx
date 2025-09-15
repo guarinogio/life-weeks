@@ -40,9 +40,10 @@ export default function App() {
 
           <SummaryBar stats={stats!} age={age!} />
           <LifeGrid birthDateISO={dobISO} years={expectancy} />
-          <Legend />
 
-          {/* Botón flotante para saltar a la semana actual */}
+          {/* Legend now shows life expectancy */}
+          <Legend expectancy={expectancy} />
+
           <JumpToCurrent />
 
           <footer className={styles.footer}>

@@ -1,75 +1,29 @@
 import { useEffect, useState } from "react";
 import styles from "./ThemeToggle.module.css";
+import ThemeTransition from "./ThemeTransition";
 
-type Theme = "light" | "dark";
 const KEY = "lifeweeks.theme";
 
-function getCurrentTheme(): Theme {
-  const attr = document.documentElement.getAttribute("data-theme");
-  return (attr === "dark" ? "dark" : "light") as Theme;
-}
-
 export default function ThemeToggle() {
-  // Initial state from the <html> attribute (set in main.tsx)
-  const [theme, setTheme] = useState<Theme>(getCurrentTheme());
+  const [theme, setTheme] = useState<"light" | "dark">(
+    (document.documentElement.getAttribute("data-theme") as "light" | "dark") || "light"
+  );
 
-  // Apply and persist theme
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem(KEY, theme);
   }, [theme]);
 
-  // Sync if changed in another tab
-  useEffect(() => {
-    const onStorage = (e: StorageEvent) => {
-      if (e.key === KEY && (e.newValue === "light" || e.newValue === "dark")) {
-        setTheme(e.newValue);
-      }
-    };
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
-  }, []);
-
-  const toggle = () => setTheme((t) => (t === "light" ? "dark" : "light"));
-  const isDark = theme === "dark";
+  const toggle = () => {
+    setTheme((t) => (t === "light" ? "dark" : "light"));
+  };
 
   return (
-    <button
-      className={styles.btn}
-      onClick={toggle}
-      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-      title={isDark ? "Light mode" : "Dark mode"}
-    >
-      {isDark ? <SunIcon /> : <MoonIcon />}
-    </button>
-  );
-}
-
-function SunIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden>
-      <circle cx="12" cy="12" r="4" fill="currentColor" />
-      <g stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-        <line x1="12" y1="2" x2="12" y2="5" />
-        <line x1="12" y1="19" x2="12" y2="22" />
-        <line x1="2" y1="12" x2="5" y2="12" />
-        <line x1="19" y1="12" x2="22" y2="12" />
-        <line x1="4.2" y1="4.2" x2="6.3" y2="6.3" />
-        <line x1="17.7" y1="17.7" x2="19.8" y2="19.8" />
-        <line x1="4.2" y1="19.8" x2="6.3" y2="17.7" />
-        <line x1="17.7" y1="6.3" x2="19.8" y2="4.2" />
-      </g>
-    </svg>
-  );
-}
-
-function MoonIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden>
-      <path
-        d="M21 12.3A8.7 8.7 0 0 1 11.7 3a8.7 8.7 0 1 0 9.3 9.3z"
-        fill="currentColor"
-      />
-    </svg>
+    <>
+      <button className={styles.btn} onClick={toggle} aria-label="Toggle theme">
+        {theme === "light" ? "🌙" : "☀️"}
+      </button>
+      <ThemeTransition theme={theme} />
+    </>
   );
 }

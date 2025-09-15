@@ -5,6 +5,8 @@ import WeekHeader from "./WeekHeader";
 import WeekCell from "./WeekCell";
 import styles from "./LifeGrid.module.css";
 
+import { motion, useReducedMotion, type Variants } from "framer-motion";
+
 interface Props {
   birthDateISO: string;
   years?: number; // default 80
@@ -18,12 +20,23 @@ export default function LifeGrid({ birthDateISO, years = 80 }: Props) {
   const rows = Array.from({ length: years }, (_, y) => y);
   const cols = Array.from({ length: 52 }, (_, w) => w);
 
-  // referencia directa a la semana actual (para scroll desde fuera si se quisiera)
   const currentRef = useRef<HTMLDivElement | null>(null);
 
+  // Variants tipadas; evitamos declarar "ease" si tu versión no lo tipa como string
+  const reduced = useReducedMotion();
+  const variants: Variants = {
+    hidden: { opacity: 0, y: reduced ? 0 : 10 },
+    visible: { opacity: 1, y: 0 },
+  };
+
   return (
-    <div className={styles.wrapper}>
-      {/* scroller: header + rows se desplazan juntos en móvil */}
+    <motion.section
+      className={styles.wrapper}
+      variants={variants}
+      initial="hidden"
+      animate="visible"
+      transition={{ duration: 0.45, ease: [0.25, 0.1, 0.25, 1] as const }}
+    >
       <div className={styles.scroller}>
         <div className={styles.headerRow}>
           <div className={`${styles.yearLabel} ${styles.headerLabel}`} aria-hidden />
@@ -55,6 +68,6 @@ export default function LifeGrid({ birthDateISO, years = 80 }: Props) {
           </div>
         ))}
       </div>
-    </div>
+    </motion.section>
   );
 }

@@ -1,10 +1,16 @@
+.wrap {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+
 .legend {
-  display: flex;              /* wrap on small screens */
+  display: flex;
   flex-wrap: wrap;
   gap: 10px 16px;
   align-items: center;
   justify-content: center;
-  margin-top: 8px;
   color: var(--c-text-muted);
   font-size: 14px;
 }
@@ -17,14 +23,15 @@
   display: inline-block;
 }
 
-.past {
-  background: var(--c-past);
-  border-color: var(--c-past);
+.past { background: var(--c-past); border-color: var(--c-past); }
+.current { background: var(--c-current); border-color: var(--c-current); }
+.future { background: transparent; }
+
+.meta {
+  color: var(--c-text-muted);
+  font-size: 13px;
 }
-.current {
-  background: var(--c-current);
-  border-color: var(--c-current);
-}
-.future {
-  background: transparent;
+
+@media print {
+  .meta { display: none; }
 }
