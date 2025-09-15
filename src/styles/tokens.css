@@ -14,11 +14,12 @@
   --c-accent: #2d74ff;
   --c-danger: #d33a2c;
 
-  /* spacing & sizes (desktop fluid; móvil usa tamaño fijo por celda) */
+  /* spacing & sizes */
   --cell-gap: clamp(2px, 0.45vw, 8px);
   --label-w: clamp(22px, 2.2vw, 32px);
+  --label-gap: 8px;      /* ← separación entre números de año y la grilla */
 
-  /* tamaño de celda para móvil (usado cuando hay scroll horizontal) */
+  /* tamaño fijo de celda usado en móvil con scroll horizontal */
   --cell-d: 14px;
 }
 
@@ -37,11 +38,11 @@
   --c-input: #15171b;
 }
 
-/* Ajustes en móviles muy pequeños */
 @media (max-width: 480px) {
   :root {
     --cell-gap: 2px;
     --label-w: 18px;
-    --cell-d: 12px;     /* puntitos un poco más chicos */
+    --label-gap: 6px;   /* un poco más compacto en teléfonos pequeños */
+    --cell-d: 12px;
   }
 }

@@ -8,16 +8,16 @@
 
 /* Agrupa cabecera + filas.
    En móvil esta capa es la que hace el scroll horizontal */
-.scroller {
-  /* desktop/tablet: sin scroll; móvil se activa más abajo */
-}
+.scroller {}
 
-/* Estructura en 2 columnas: etiqueta de año + contenido (cabecera/semana) */
+/* Dos columnas: etiqueta de año + contenido.
+   Añadimos column-gap para la separación a la derecha del número de año */
 .headerRow,
 .row {
   display: grid;
   grid-template-columns: var(--label-w) 1fr;
   align-items: center;
+  column-gap: var(--label-gap); /* ← separación consistente */
 }
 
 /* ---- Cabecera de semanas (números) ---- */
@@ -29,8 +29,7 @@
   font-size: 11px;
   font-variant-numeric: tabular-nums;
   text-align: center;
-  /* misma separación vertical que las filas para evitar “saltos” */
-  margin: 0;
+  margin: 0; /* misma separación vertical que las filas */
 }
 
 .weekMinor {
@@ -41,10 +40,11 @@
   font-weight: 500;
 }
 
-/* En pantallas medianas ocultamos los números "menores" para no saturar */
+/* En pantallas medianas "ocultamos" los menores
+   pero manteniendo su espacio para no amontonar a la izquierda */
 @media (max-width: 700px) {
   .weekMinor {
-    display: none;
+    visibility: hidden; /* ocupa lugar, mantiene alineación */
   }
 }
 
@@ -57,12 +57,11 @@
   width: var(--label-w);
   color: var(--c-text-muted);
   font-size: 12px;
-  line-height: 1;          /* evita que line-height agrande la fila */
-  height: 100%;            /* toma la altura de la fila (definida por los puntos) */
+  line-height: 1;
+  height: 100%;
   display: flex;
-  align-items: center;      /* centra verticalmente dentro de la fila */
-  justify-content: flex-end;
-  padding-right: 2px;       /* pequeño respiro antes de los puntos */
+  align-items: center;
+  justify-content: flex-end; /* texto pegado a la derecha de la columna */
 }
 
 @media (max-width: 480px) {
@@ -90,7 +89,6 @@
     -webkit-overflow-scrolling: touch;
   }
 
-  /* ancho total de la zona de semanas (52 celdas + 51 gaps) */
   .weekHeader {
     grid-template-columns: repeat(52, var(--cell-d));
   }
