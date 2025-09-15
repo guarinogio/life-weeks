@@ -9,13 +9,14 @@
 /* Agrupa cabecera + filas (esta capa scrollea en móvil) */
 .scroller {}
 
-/* Dos columnas: etiqueta de año + contenido */
+/* Dos columnas: etiqueta de año + contenido
+   -> SIN column-gap (el gap arruina el sticky);
+   la separación se aplica como padding-right en el label. */
 .headerRow,
 .row {
   display: grid;
   grid-template-columns: var(--label-w) 1fr;
   align-items: center;
-  column-gap: var(--label-gap);
 }
 
 /* ---- Cabecera de semanas ---- */
@@ -26,18 +27,25 @@
   color: var(--c-text-muted);
   font-size: 11px;
   font-variant-numeric: tabular-nums;
-  text-align: center;
   margin: 0;
+  /* centra cada celda de número */
+  justify-items: center;
+}
+.weekHeader > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
 }
 .weekMinor { opacity: 0.6; }
 .weekMajor { opacity: 1; font-weight: 500; }
 
 @media (max-width: 700px) {
-  /* Mantiene el espacio de las posiciones "menores" para no amontonar */
+  /* Oculta visualmente los intermedios PERO mantiene su espacio */
   .weekMinor { visibility: hidden; }
 }
 
-/* ---- Etiqueta de año (también usada como celda vacía de cabecera) ---- */
+/* ---- Etiqueta de año (y la celda vacía de cabecera) ---- */
 .yearLabel {
   width: var(--label-w);
   color: var(--c-text-muted);
@@ -47,10 +55,16 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-}
 
-.headerLabel { /* la celda superior izquierda de la fila de cabecera */
+  /* separación a la derecha SIN usar column-gap */
+  padding-right: var(--label-gap);
+  background: var(--c-bg);
+}
+.headerLabel {
+  /* celda superior izquierda en la fila de cabecera */
   color: transparent;
+  padding-right: var(--label-gap);
+  background: var(--c-bg);
 }
 
 @media (max-width: 480px) {
@@ -71,7 +85,6 @@
   .scroller {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    position: relative;
   }
 
   .weekHeader {
@@ -87,14 +100,14 @@
     grid-template-columns: repeat(52, var(--cell-d));
   }
 
-  /* Columna izquierda fija: label de cabecera y labels de años */
+  /* Columna izquierda fija */
   .yearLabel,
   .headerLabel {
     position: sticky;
     left: 0;
-    z-index: 2;
-    background: var(--c-bg);         /* tapa el contenido al desplazarse */
-    box-shadow: 1px 0 0 var(--c-grid); /* ligera división a la derecha */
+    z-index: 5;               /* por encima de los puntos */
+    box-shadow: 1px 0 0 var(--c-grid);
+    background: var(--c-bg);  /* tapa el contenido al desplazarse */
   }
 }
 
