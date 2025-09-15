@@ -33,19 +33,53 @@
   color: var(--c-text-muted);
 }
 
-.input {
-  font: inherit;
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1px solid var(--c-border);
+/* --- Date segmented input --- */
+.dateRow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   background: var(--c-input);
-  outline: none;
-}
-.input:focus-visible {
-  border-color: var(--c-accent);
-  box-shadow: 0 0 0 3px color-mix(in oklab, var(--c-accent) 30%, transparent);
+  border: 1px solid var(--c-border);
+  border-radius: 10px;
+  padding: 8px 12px;
 }
 
+.segment,
+.segmentYear {
+  font: inherit;
+  color: var(--c-text);
+  background: transparent;
+  border: none;
+  outline: none;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  caret-color: var(--c-accent);
+}
+
+.segment::placeholder,
+.segmentYear::placeholder {
+  color: color-mix(in oklab, var(--c-text) 35%, transparent);
+}
+
+.segment {
+  width: 2.2em; /* fits two digits */
+}
+
+.segmentYear {
+  width: 3.6em; /* fits four digits */
+}
+
+.sep {
+  color: var(--c-text-muted);
+  user-select: none;
+}
+
+.dateRow:focus-within {
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--c-accent) 25%, transparent);
+  border-color: var(--c-accent);
+}
+
+/* --- Checkbox + buttons --- */
 .check {
   display: flex;
   align-items: center;

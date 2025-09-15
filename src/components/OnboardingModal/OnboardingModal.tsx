@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { parseDMYToISO } from "../../lib/date";
 import { setDOB } from "../../lib/storage";
 import styles from "./OnboardingModal.module.css";
@@ -7,11 +7,100 @@ interface Props {
   onConfirmed: (iso: string) => void;
 }
 
+// Helpers
+const onlyDigits = (s: string) => s.replace(/\D/g, "");
+
+function splitClipboardToDMY(text: string) {
+  const digits = onlyDigits(text).slice(0, 8);
+  if (digits.length < 4) return null; // too short to be useful
+  const d = digits.slice(0, 2);
+  const m = digits.slice(2, 4);
+  const y = digits.slice(4);
+  return { d, m, y };
+}
+
+function pad2(s: string) {
+  if (!s) return s;
+  return s.length === 1 ? `0${s}` : s.slice(0, 2);
+}
+
 export default function OnboardingModal({ onConfirmed }: Props) {
-  const [value, setValue] = useState("");
+  const [day, setDay] = useState("");
+  const [month, setMonth] = useState("");
+  const [year, setYear] = useState("");
   const [accepted, setAccepted] = useState(false);
-  const iso = useMemo(() => parseDMYToISO(value), [value]);
+
+  const dayRef = useRef<HTMLInputElement>(null);
+  const monthRef = useRef<HTMLInputElement>(null);
+  const yearRef = useRef<HTMLInputElement>(null);
+
+  // Build display string when complete for validation
+  const dmy = `${pad2(day)}/${pad2(month)}/${year}`;
+  const isComplete = day.length === 2 && month.length === 2 && year.length === 4;
+  const iso = useMemo(() => (isComplete ? parseDMYToISO(dmy) : null), [dmy, isComplete]);
   const isValid = !!iso;
+
+  useEffect(() => {
+    // autofocus day on mount
+    dayRef.current?.focus();
+  }, []);
+
+  // Handlers for each input
+  const onDayChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const v = onlyDigits(e.target.value).slice(0, 2);
+    setDay(v);
+    if (v.length === 2) monthRef.current?.focus();
+  };
+  const onMonthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const v = onlyDigits(e.target.value).slice(0, 2);
+    setMonth(v);
+    if (v.length === 2) yearRef.current?.focus();
+  };
+  const onYearChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const v = onlyDigits(e.target.value).slice(0, 4);
+    setYear(v);
+  };
+
+  // Backspace navigation
+  const onDayKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Backspace" && day.length === 0) {
+      e.preventDefault();
+    }
+  };
+  const onMonthKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Backspace" && month.length === 0) {
+      e.preventDefault();
+      dayRef.current?.focus();
+      // delete last digit from day if any
+      setDay((prev) => prev.slice(0, Math.max(0, prev.length - 1)));
+    }
+  };
+  const onYearKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Backspace" && year.length === 0) {
+      e.preventDefault();
+      monthRef.current?.focus();
+      setMonth((prev) => prev.slice(0, Math.max(0, prev.length - 1)));
+    }
+  };
+
+  // Paste into the first field: split to D/M/Y
+  const onDayPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    const text = e.clipboardData.getData("text");
+    const parts = splitClipboardToDMY(text);
+    if (!parts) return; // let default paste if not enough
+    e.preventDefault();
+    setDay(parts.d);
+    setMonth(parts.m);
+    setYear(parts.y);
+    // move focus accordingly
+    if (parts.y.length === 4) yearRef.current?.focus();
+    else if (parts.m.length === 2) yearRef.current?.focus();
+    else monthRef.current?.focus();
+  };
+
+  // Blur padding (adds leading zero if needed)
+  const onDayBlur = () => setDay((v) => pad2(v));
+  const onMonthBlur = () => setMonth((v) => pad2(v));
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -25,29 +114,62 @@ export default function OnboardingModal({ onConfirmed }: Props) {
       <div className={styles.modal}>
         <h2>Date of birth</h2>
         <p className={styles.help}>
-          Enter your date in the format <strong>dd/mm/yyyy</strong>. It will be
-          saved and you won’t be able to change it later.
+          Enter your date. It will be saved and you won’t be able to change it later.
         </p>
+
         <form onSubmit={submit} className={styles.form}>
-          <label htmlFor="dob" className={styles.label}>
-            dd/mm/yyyy
-          </label>
-          <input
-            id="dob"
-            inputMode="numeric"
-            placeholder="31/12/1990"
-            className={styles.input}
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            pattern="^\d{1,2}/\d{1,2}/\d{4}$"
-            required
-          />
+          <label className={styles.label}>dd/mm/yyyy</label>
+
+          <div className={styles.dateRow} role="group" aria-label="Date of birth">
+            <input
+              ref={dayRef}
+              className={styles.segment}
+              aria-label="Day"
+              placeholder="dd"
+              inputMode="numeric"
+              autoComplete="bday-day"
+              value={day}
+              onChange={onDayChange}
+              onKeyDown={onDayKeyDown}
+              onPaste={onDayPaste}
+              onBlur={onDayBlur}
+              maxLength={2}
+            />
+            <span className={styles.sep}>/</span>
+            <input
+              ref={monthRef}
+              className={styles.segment}
+              aria-label="Month"
+              placeholder="mm"
+              inputMode="numeric"
+              autoComplete="bday-month"
+              value={month}
+              onChange={onMonthChange}
+              onKeyDown={onMonthKeyDown}
+              onBlur={onMonthBlur}
+              maxLength={2}
+            />
+            <span className={styles.sep}>/</span>
+            <input
+              ref={yearRef}
+              className={styles.segmentYear}
+              aria-label="Year"
+              placeholder="yyyy"
+              inputMode="numeric"
+              autoComplete="bday-year"
+              value={year}
+              onChange={onYearChange}
+              onKeyDown={onYearKeyDown}
+              maxLength={4}
+            />
+          </div>
 
           <label className={styles.check}>
             <input
               type="checkbox"
               checked={accepted}
               onChange={(e) => setAccepted(e.target.checked)}
+              required
             />
             <span>I understand I won’t be able to change it</span>
           </label>
@@ -61,7 +183,7 @@ export default function OnboardingModal({ onConfirmed }: Props) {
             Confirm
           </button>
 
-          {!isValid && value.length > 0 && (
+          {!isValid && isComplete && (
             <p className={styles.error}>Invalid date.</p>
           )}
         </form>

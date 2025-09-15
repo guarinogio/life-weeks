@@ -1,5 +1,5 @@
 .app {
-  max-width: 1200px; /* un poco más ancho para desktop */
+  max-width: 1200px;
   margin-inline: auto;
   padding: 24px;
 }

@@ -10,7 +10,6 @@ import ThemeToggle from "../components/ThemeToggle";
 import styles from "./App.module.css";
 
 export default function App() {
-  // hooks must always run in the same order
   const [dobISO, setDobISO] = useState<string | null>(getDOB());
 
   const stats = useMemo(
