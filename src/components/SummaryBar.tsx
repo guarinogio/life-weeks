@@ -22,13 +22,13 @@ export default function SummaryBar({
   return (
     <section className={styles.wrap}>
       <div className={styles.line}>
-        Has vivido <strong>{stats.livedWeeks.toLocaleString()}</strong> semanas
-        de <strong>{stats.totalWeeks.toLocaleString()}</strong>{" "}
-        (<strong>{stats.percent.toFixed(1)}%</strong>). Te quedan{" "}
+        You have lived <strong>{stats.livedWeeks.toLocaleString()}</strong>{" "}
+        weeks out of <strong>{stats.totalWeeks.toLocaleString()}</strong>{" "}
+        (<strong>{stats.percent.toFixed(1)}%</strong>). Remaining:{" "}
         <strong>{stats.remainingWeeks.toLocaleString()}</strong>.
       </div>
       <div className={styles.lineMuted}>
-        Edad: {age.years} años, {age.months} meses y {age.days} días.
+        Age: {age.years} years, {age.months} months and {age.days} days.
       </div>
     </section>
   );

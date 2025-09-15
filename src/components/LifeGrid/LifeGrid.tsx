@@ -37,7 +37,7 @@ export default function LifeGrid({ birthDateISO, years = 80 }: Props) {
                 <WeekCell
                   key={w}
                   state={state}
-                  title={`Año ${year}, semana ${w + 1}`}
+                  title={`Year ${year}, week ${w + 1}`}
                 />
               );
             })}

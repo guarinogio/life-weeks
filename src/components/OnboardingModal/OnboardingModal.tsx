@@ -16,7 +16,6 @@ export default function OnboardingModal({ onConfirmed }: Props) {
   function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!isValid || !accepted) return;
-    // guardamos y notificamos al padre con la misma fecha
     setDOB(iso!);
     onConfirmed(iso!);
   }
@@ -24,14 +23,14 @@ export default function OnboardingModal({ onConfirmed }: Props) {
   return (
     <div className={styles.backdrop}>
       <div className={styles.modal}>
-        <h2>Fecha de nacimiento</h2>
+        <h2>Date of birth</h2>
         <p className={styles.help}>
-          Ingresa tu fecha con el formato <strong>dd/mm/aaaa</strong>. Esta
-          fecha se guardará y no podrás cambiarla luego.
+          Enter your date in the format <strong>dd/mm/yyyy</strong>. It will be
+          saved and you won’t be able to change it later.
         </p>
         <form onSubmit={submit} className={styles.form}>
           <label htmlFor="dob" className={styles.label}>
-            dd/mm/aaaa
+            dd/mm/yyyy
           </label>
           <input
             id="dob"
@@ -50,7 +49,7 @@ export default function OnboardingModal({ onConfirmed }: Props) {
               checked={accepted}
               onChange={(e) => setAccepted(e.target.checked)}
             />
-            <span>Entiendo que no podré cambiarla</span>
+            <span>I understand I won’t be able to change it</span>
           </label>
 
           <button
@@ -59,11 +58,11 @@ export default function OnboardingModal({ onConfirmed }: Props) {
             disabled={!isValid || !accepted}
             aria-disabled={!isValid || !accepted}
           >
-            Confirmar
+            Confirm
           </button>
 
           {!isValid && value.length > 0 && (
-            <p className={styles.error}>Fecha inválida.</p>
+            <p className={styles.error}>Invalid date.</p>
           )}
         </form>
       </div>

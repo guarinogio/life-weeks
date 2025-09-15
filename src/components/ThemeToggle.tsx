@@ -10,16 +10,16 @@ function getCurrentTheme(): Theme {
 }
 
 export default function ThemeToggle() {
-  // Estado inicial desde el atributo del <html> (ya seteado en main.tsx)
+  // Initial state from the <html> attribute (set in main.tsx)
   const [theme, setTheme] = useState<Theme>(getCurrentTheme());
 
-  // Aplica el tema y persiste en localStorage cada vez que cambia
+  // Apply and persist theme
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem(KEY, theme);
   }, [theme]);
 
-  // (Opcional) sincroniza si cambia en otra pestaña
+  // Sync if changed in another tab
   useEffect(() => {
     const onStorage = (e: StorageEvent) => {
       if (e.key === KEY && (e.newValue === "light" || e.newValue === "dark")) {
@@ -37,8 +37,8 @@ export default function ThemeToggle() {
     <button
       className={styles.btn}
       onClick={toggle}
-      aria-label={isDark ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
-      title={isDark ? "Modo claro" : "Modo oscuro"}
+      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      title={isDark ? "Light mode" : "Dark mode"}
     >
       {isDark ? <SunIcon /> : <MoonIcon />}
     </button>
