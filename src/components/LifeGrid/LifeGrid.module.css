@@ -1,4 +1,4 @@
-/* Contenedor general (bordes y padding vertical) */
+/* Contenedor general */
 .wrapper {
   padding: 10px 0 18px 0;
   margin-top: 8px;
@@ -6,21 +6,19 @@
   border-bottom: 1px solid var(--c-grid);
 }
 
-/* Agrupa cabecera + filas.
-   En móvil esta capa es la que hace el scroll horizontal */
+/* Agrupa cabecera + filas (esta capa scrollea en móvil) */
 .scroller {}
 
-/* Dos columnas: etiqueta de año + contenido.
-   Añadimos column-gap para la separación a la derecha del número de año */
+/* Dos columnas: etiqueta de año + contenido */
 .headerRow,
 .row {
   display: grid;
   grid-template-columns: var(--label-w) 1fr;
   align-items: center;
-  column-gap: var(--label-gap); /* ← separación consistente */
+  column-gap: var(--label-gap);
 }
 
-/* ---- Cabecera de semanas (números) ---- */
+/* ---- Cabecera de semanas ---- */
 .weekHeader {
   display: grid;
   grid-template-columns: repeat(52, 1fr);
@@ -29,30 +27,17 @@
   font-size: 11px;
   font-variant-numeric: tabular-nums;
   text-align: center;
-  margin: 0; /* misma separación vertical que las filas */
+  margin: 0;
 }
+.weekMinor { opacity: 0.6; }
+.weekMajor { opacity: 1; font-weight: 500; }
 
-.weekMinor {
-  opacity: 0.6;
-}
-.weekMajor {
-  opacity: 1;
-  font-weight: 500;
-}
-
-/* En pantallas medianas "ocultamos" los menores
-   pero manteniendo su espacio para no amontonar a la izquierda */
 @media (max-width: 700px) {
-  .weekMinor {
-    visibility: hidden; /* ocupa lugar, mantiene alineación */
-  }
+  /* Mantiene el espacio de las posiciones "menores" para no amontonar */
+  .weekMinor { visibility: hidden; }
 }
 
-.labelSpacer {
-  width: var(--label-w);
-}
-
-/* ---- Year label: no debe estirar la fila ---- */
+/* ---- Etiqueta de año (también usada como celda vacía de cabecera) ---- */
 .yearLabel {
   width: var(--label-w);
   color: var(--c-text-muted);
@@ -61,13 +46,15 @@
   height: 100%;
   display: flex;
   align-items: center;
-  justify-content: flex-end; /* texto pegado a la derecha de la columna */
+  justify-content: flex-end;
+}
+
+.headerLabel { /* la celda superior izquierda de la fila de cabecera */
+  color: transparent;
 }
 
 @media (max-width: 480px) {
-  .yearLabel {
-    font-size: 11px;
-  }
+  .yearLabel { font-size: 11px; }
 }
 
 .weeks {
@@ -77,16 +64,14 @@
 }
 
 /* Distancia vertical uniforme entre filas */
-.row {
-  margin-block: 8px;
-}
+.row { margin-block: 8px; }
 
-/* ---- Móvil: scroll horizontal y columnas de ancho fijo,
-   cabecera y grilla se mueven juntas ---- */
+/* ---- Móvil: scroll horizontal y sticky de la columna de años ---- */
 @media (max-width: 600px) {
   .scroller {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    position: relative;
   }
 
   .weekHeader {
@@ -101,16 +86,20 @@
   .weeks {
     grid-template-columns: repeat(52, var(--cell-d));
   }
+
+  /* Columna izquierda fija: label de cabecera y labels de años */
+  .yearLabel,
+  .headerLabel {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background: var(--c-bg);         /* tapa el contenido al desplazarse */
+    box-shadow: 1px 0 0 var(--c-grid); /* ligera división a la derecha */
+  }
 }
 
 /* Print */
 @media print {
-  .wrapper {
-    border: none;
-    padding: 0;
-    margin: 0;
-  }
-  .row {
-    margin-block: 6px;
-  }
+  .wrapper { border: none; padding: 0; margin: 0; }
+  .row { margin-block: 6px; }
 }

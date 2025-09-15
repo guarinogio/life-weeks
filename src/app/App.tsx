@@ -7,14 +7,13 @@ import LifeGrid from "../components/LifeGrid/LifeGrid";
 import Legend from "../components/Legend";
 import SummaryBar from "../components/SummaryBar";
 import ThemeToggle from "../components/ThemeToggle";
+import JumpToCurrent from "../components/JumpToCurrent";
 import styles from "./App.module.css";
 
 export default function App() {
-  // estado inicial desde storage
   const [dobISO, setDobISO] = useState<string | null>(getDOB());
   const [expectancy, setExpectancy] = useState<number>(getExpectancy());
 
-  // calcular stats solo si hay DOB
   const stats = useMemo(
     () => (dobISO ? computeStats(dobISO, expectancy) : null),
     [dobISO, expectancy]
@@ -24,12 +23,11 @@ export default function App() {
   return (
     <div className={styles.app}>
       <ThemeToggle />
+
       {!dobISO ? (
-        // el modal ahora también guarda la expectativa de vida
         <OnboardingModal
           onConfirmed={(iso) => {
             setDobISO(iso);
-            // aseguramos leer la expectativa que el modal guardó (o 80 por defecto)
             setExpectancy(getExpectancy());
           }}
         />
@@ -44,24 +42,23 @@ export default function App() {
           <LifeGrid birthDateISO={dobISO} years={expectancy} />
           <Legend />
 
+          {/* Botón flotante para saltar a la semana actual */}
+          <JumpToCurrent />
+
           <footer className={styles.footer}>
             <small>
               <a
                 href="#reset"
                 onClick={(e) => {
                   e.preventDefault();
-                  if (
-                    window.confirm(
-                      "Are you sure you want to clear your saved data?"
-                    )
-                  ) {
+                  if (window.confirm("Are you sure you want to clear your saved data?")) {
                     localStorage.removeItem("lifeweeks.v1");
                     window.location.reload();
                   }
                 }}
                 style={{ opacity: 0.5 }}
               >
-                Reset (hidden)
+                Reset
               </a>
             </small>
           </footer>

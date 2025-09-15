@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { weeksBetween } from "../../lib/date";
 import YearLabel from "./YearLabel";
 import WeekHeader from "./WeekHeader";
@@ -17,12 +18,15 @@ export default function LifeGrid({ birthDateISO, years = 80 }: Props) {
   const rows = Array.from({ length: years }, (_, y) => y);
   const cols = Array.from({ length: 52 }, (_, w) => w);
 
+  // referencia directa a la semana actual (para scroll desde fuera si se quisiera)
+  const currentRef = useRef<HTMLDivElement | null>(null);
+
   return (
     <div className={styles.wrapper}>
-      {/* scroller agrupa cabecera + filas para que se desplacen juntas en móvil */}
+      {/* scroller: header + rows se desplazan juntos en móvil */}
       <div className={styles.scroller}>
         <div className={styles.headerRow}>
-          <div className={styles.labelSpacer} />
+          <div className={`${styles.yearLabel} ${styles.headerLabel}`} aria-hidden />
           <WeekHeader />
         </div>
 
@@ -35,11 +39,15 @@ export default function LifeGrid({ birthDateISO, years = 80 }: Props) {
                 let state: "past" | "current" | "future" = "future";
                 if (k < livedWeeks) state = "past";
                 else if (k === currentIndex) state = "current";
+
+                const isCurrent = state === "current";
                 return (
                   <WeekCell
                     key={w}
                     state={state}
                     title={`Year ${year}, week ${w + 1}`}
+                    ref={isCurrent ? currentRef : undefined}
+                    data-current={isCurrent ? "true" : undefined}
                   />
                 );
               })}
