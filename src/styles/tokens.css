@@ -1,5 +1,5 @@
 :root {
-  /* (igual que ya tienes) */
+  /* Light theme is the default */
   --c-bg: #ffffff;
   --c-text: #111213;
   --c-text-muted: #666a70;
@@ -14,11 +14,12 @@
   --c-accent: #2d74ff;
   --c-danger: #d33a2c;
 
+  /* spacing & sizing */
   --cell-gap: clamp(2px, 0.45vw, 8px);
   --label-w: clamp(22px, 2.2vw, 32px);
 }
 
-/* 👇 overrides cuando el documento tenga data-theme="dark" */
+/* Dark overrides when user toggles it */
 :root[data-theme="dark"] {
   --c-bg: #0e0f12;
   --c-text: #e8eaed;
@@ -31,4 +32,12 @@
   --c-future: #545861;
 
   --c-input: #15171b;
+}
+
+/* Extra-tight spacing on very small phones */
+@media (max-width: 480px) {
+  :root {
+    --cell-gap: 2px;
+    --label-w: 18px;
+  }
 }

@@ -12,7 +12,7 @@ const onlyDigits = (s: string) => s.replace(/\D/g, "");
 
 function splitClipboardToDMY(text: string) {
   const digits = onlyDigits(text).slice(0, 8);
-  if (digits.length < 4) return null; // too short to be useful
+  if (digits.length < 4) return null;
   const d = digits.slice(0, 2);
   const m = digits.slice(2, 4);
   const y = digits.slice(4);
@@ -34,18 +34,20 @@ export default function OnboardingModal({ onConfirmed }: Props) {
   const monthRef = useRef<HTMLInputElement>(null);
   const yearRef = useRef<HTMLInputElement>(null);
 
-  // Build display string when complete for validation
   const dmy = `${pad2(day)}/${pad2(month)}/${year}`;
   const isComplete = day.length === 2 && month.length === 2 && year.length === 4;
-  const iso = useMemo(() => (isComplete ? parseDMYToISO(dmy) : null), [dmy, isComplete]);
+
+  // ⤵️ validate with 80-year cap
+  const iso = useMemo(
+    () => (isComplete ? parseDMYToISO(dmy, 80) : null),
+    [dmy, isComplete]
+  );
   const isValid = !!iso;
 
   useEffect(() => {
-    // autofocus day on mount
     dayRef.current?.focus();
   }, []);
 
-  // Handlers for each input
   const onDayChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const v = onlyDigits(e.target.value).slice(0, 2);
     setDay(v);
@@ -61,17 +63,13 @@ export default function OnboardingModal({ onConfirmed }: Props) {
     setYear(v);
   };
 
-  // Backspace navigation
   const onDayKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Backspace" && day.length === 0) {
-      e.preventDefault();
-    }
+    if (e.key === "Backspace" && day.length === 0) e.preventDefault();
   };
   const onMonthKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Backspace" && month.length === 0) {
       e.preventDefault();
       dayRef.current?.focus();
-      // delete last digit from day if any
       setDay((prev) => prev.slice(0, Math.max(0, prev.length - 1)));
     }
   };
@@ -83,22 +81,19 @@ export default function OnboardingModal({ onConfirmed }: Props) {
     }
   };
 
-  // Paste into the first field: split to D/M/Y
   const onDayPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     const text = e.clipboardData.getData("text");
     const parts = splitClipboardToDMY(text);
-    if (!parts) return; // let default paste if not enough
+    if (!parts) return;
     e.preventDefault();
     setDay(parts.d);
     setMonth(parts.m);
     setYear(parts.y);
-    // move focus accordingly
     if (parts.y.length === 4) yearRef.current?.focus();
     else if (parts.m.length === 2) yearRef.current?.focus();
     else monthRef.current?.focus();
   };
 
-  // Blur padding (adds leading zero if needed)
   const onDayBlur = () => setDay((v) => pad2(v));
   const onMonthBlur = () => setMonth((v) => pad2(v));
 
@@ -184,7 +179,9 @@ export default function OnboardingModal({ onConfirmed }: Props) {
           </button>
 
           {!isValid && isComplete && (
-            <p className={styles.error}>Invalid date.</p>
+            <p className={styles.error}>
+              Invalid date. Users must be 80 years old or younger.
+            </p>
           )}
         </form>
       </div>

@@ -1,5 +1,5 @@
 .wrapper {
-  /* Sin scroll horizontal: todo entra en el ancho del contenedor */
+  /* No horizontal scroll; the 52 columns fluidly fit */
   padding: 10px 0 18px 0;
   margin-top: 8px;
   border-top: 1px solid var(--c-grid);
@@ -13,12 +13,44 @@
   align-items: center;
 }
 
+/* ---- Week header (numbers) ---- */
+.weekHeader {
+  display: grid;
+  grid-template-columns: repeat(52, 1fr);
+  gap: var(--cell-gap);
+  color: var(--c-text-muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 6px;
+  text-align: center;
+}
+.weekMinor {
+  opacity: 0.6;
+}
+.weekMajor {
+  opacity: 1;
+  font-weight: 500;
+}
+
+/* Hide most labels on medium screens */
+@media (max-width: 700px) {
+  .weekMinor {
+    display: none;
+  }
+}
+
+/* Hide the whole header row on small phones to save space */
+@media (max-width: 480px) {
+  .headerRow {
+    display: none;
+  }
+}
+
 .labelSpacer {
   width: var(--label-w);
 }
 
 .weeks {
-  /* 52 columnas fluidas: cada una ocupa 1fr del ancho disponible */
   display: grid;
   grid-template-columns: repeat(52, 1fr);
   gap: var(--cell-gap);

@@ -1,26 +1,47 @@
 import {
   differenceInCalendarDays,
+  differenceInYears,
   format,
   isValid,
   parse,
   startOfDay,
 } from "date-fns";
 
-export function parseDMYToISO(dmy: string): string | null {
-  // admite "dd/mm/aaaa" con o sin ceros
+/**
+ * Parses "dd/mm/yyyy" to ISO ("yyyy-MM-dd").
+ * Returns null when:
+ *  - format is invalid
+ *  - date is in the future
+ *  - (optional) age exceeds maxAgeYears
+ */
+export function parseDMYToISO(
+  dmy: string,
+  maxAgeYears?: number
+): string | null {
   const re = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
   const m = dmy.trim().match(re);
   if (!m) return null;
+
   const d = parse(`${m[1]}/${m[2]}/${m[3]}`, "d/M/yyyy", new Date());
   if (!isValid(d)) return null;
-  // evitar fechas futuras
+
   const today = startOfDay(new Date());
-  if (d > today) return null;
-  return format(d, "yyyy-MM-dd");
+  const dob = startOfDay(d);
+
+  // future date not allowed
+  if (dob > today) return null;
+
+  // reject if older than maxAgeYears (allow exactly == max)
+  if (typeof maxAgeYears === "number") {
+    const years = differenceInYears(today, dob); // full years
+    if (years > maxAgeYears) return null;
+  }
+
+  return format(dob, "yyyy-MM-dd");
 }
 
 export function weeksBetween(dobISO: string, date = new Date()): number {
-  // semanas COMPLETAS transcurridas
+  // full weeks elapsed
   const dob = startOfDay(new Date(dobISO));
   const today = startOfDay(date);
   const days = differenceInCalendarDays(today, dob);
@@ -31,13 +52,11 @@ export function weeksBetween(dobISO: string, date = new Date()): number {
 export function ageBreakdown(dobISO: string) {
   const dob = startOfDay(new Date(dobISO));
   const today = startOfDay(new Date());
-  // cálculo simple: años/meses/días aproximados para mostrar (sin libs pesadas)
   let years = today.getFullYear() - dob.getFullYear();
   let months = today.getMonth() - dob.getMonth();
   let days = today.getDate() - dob.getDate();
 
   if (days < 0) {
-    // pedir días del mes anterior
     const prevMonth = new Date(today.getFullYear(), today.getMonth(), 0);
     days += prevMonth.getDate();
     months -= 1;

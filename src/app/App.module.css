@@ -20,6 +20,13 @@
   color: var(--c-text-muted);
 }
 
+/* Tighter padding on narrow screens */
+@media (max-width: 480px) {
+  .app {
+    padding: 16px 12px;
+  }
+}
+
 .footer {
   display: flex;
   justify-content: center;

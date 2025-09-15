@@ -1,7 +1,7 @@
 .legend {
-  display: grid;
-  grid-auto-flow: column;
-  gap: 10px;
+  display: flex;              /* wrap on small screens */
+  flex-wrap: wrap;
+  gap: 10px 16px;
   align-items: center;
   justify-content: center;
   margin-top: 8px;
@@ -25,7 +25,6 @@
   background: var(--c-current);
   border-color: var(--c-current);
 }
-/* estaba vacío → añade algo explícito */
 .future {
   background: transparent;
 }
