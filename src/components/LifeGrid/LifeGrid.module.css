@@ -28,24 +28,25 @@
   font-size: 11px;
   font-variant-numeric: tabular-nums;
   margin: 0;
-  /* centra cada celda de número */
-  justify-items: center;
+  justify-items: center; /* centra cada número en su columna */
 }
+
 .weekHeader > span {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 100%;
 }
+
 .weekMinor { opacity: 0.6; }
 .weekMajor { opacity: 1; font-weight: 500; }
 
 @media (max-width: 700px) {
-  /* Oculta visualmente los intermedios PERO mantiene su espacio */
+  /* oculta visualmente los intermedios PERO mantiene su ancho */
   .weekMinor { visibility: hidden; }
 }
 
-/* ---- Etiqueta de año (y la celda vacía de cabecera) ---- */
+/* ---- Etiqueta de año (y celda vacía de cabecera) ---- */
 .yearLabel {
   width: var(--label-w);
   color: var(--c-text-muted);
@@ -55,14 +56,12 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-
-  /* separación a la derecha SIN usar column-gap */
-  padding-right: var(--label-gap);
+  padding-right: var(--label-gap); /* separación sin usar column-gap */
   background: var(--c-bg);
 }
+
 .headerLabel {
-  /* celda superior izquierda en la fila de cabecera */
-  color: transparent;
+  color: transparent;          /* esquina superior izquierda */
   padding-right: var(--label-gap);
   background: var(--c-bg);
 }
@@ -80,34 +79,43 @@
 /* Distancia vertical uniforme entre filas */
 .row { margin-block: 8px; }
 
-/* ---- Móvil: scroll horizontal y sticky de la columna de años ---- */
+/* ---- Móvil: scroll horizontal + sticky de columna izquierda y fila superior ---- */
 @media (max-width: 600px) {
   .scroller {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    position: relative;
   }
 
+  /* columnas de ancho fijo para scroll horizontal */
   .weekHeader {
     grid-template-columns: repeat(52, var(--cell-d));
   }
-
   .row {
     grid-template-columns: var(--label-w)
       calc(52 * var(--cell-d) + 51 * var(--cell-gap));
   }
-
   .weeks {
     grid-template-columns: repeat(52, var(--cell-d));
   }
 
-  /* Columna izquierda fija */
+  /* Columna izquierda SIEMPRE visible */
   .yearLabel,
   .headerLabel {
     position: sticky;
     left: 0;
-    z-index: 5;               /* por encima de los puntos */
+    z-index: 6;                       /* encima de los puntos y cabecera */
     box-shadow: 1px 0 0 var(--c-grid);
-    background: var(--c-bg);  /* tapa el contenido al desplazarse */
+    background: var(--c-bg);
+  }
+
+  /* Fila superior (números de semana) SIEMPRE visible */
+  .headerRow {
+    position: sticky;
+    top: 0;
+    z-index: 7;                       /* por encima de la columna sticky */
+    background: var(--c-bg);
+    box-shadow: 0 1px 0 var(--c-grid);
   }
 }
 
