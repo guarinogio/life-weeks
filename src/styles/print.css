@@ -1,0 +1,12 @@
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+  .legend,
+  button,
+  a,
+  form {
+    display: none !important;
+  }
+}

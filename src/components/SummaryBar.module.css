@@ -1,0 +1,16 @@
+.wrap {
+  display: grid;
+  gap: 4px;
+  justify-items: center;
+  margin-block: 10px 8px;
+  text-align: center;
+}
+
+.line {
+  font-size: clamp(14px, 2.2vw, 18px);
+}
+
+.lineMuted {
+  color: var(--c-text-muted);
+  font-size: 13px;
+}
