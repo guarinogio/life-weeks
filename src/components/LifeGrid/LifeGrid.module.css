@@ -1,5 +1,5 @@
+/* Wrapper: por defecto sin scroll (desktop/tablet) */
 .wrapper {
-  /* No horizontal scroll; the 52 columns fluidly fit */
   padding: 10px 0 18px 0;
   margin-top: 8px;
   border-top: 1px solid var(--c-grid);
@@ -32,16 +32,9 @@
   font-weight: 500;
 }
 
-/* Hide most labels on medium screens */
+/* En pantallas medianas ocultamos los números "menores" para no saturar */
 @media (max-width: 700px) {
   .weekMinor {
-    display: none;
-  }
-}
-
-/* Hide the whole header row on small phones to save space */
-@media (max-width: 480px) {
-  .headerRow {
     display: none;
   }
 }
@@ -60,6 +53,26 @@
   margin-block: 8px;
 }
 
+/* ---- Mejora móvil: scroll horizontal y columnas de ancho fijo ---- */
+@media (max-width: 600px) {
+  .wrapper {
+    overflow-x: auto;                /* habilita scroll horizontal */
+    -webkit-overflow-scrolling: touch;
+  }
+  .weekHeader {
+    grid-template-columns: repeat(52, var(--cell-d));  /* ancho fijo por celda */
+    min-width: calc(var(--label-w) + 52 * var(--cell-d) + 51 * var(--cell-gap));
+  }
+  .row {
+    grid-template-columns: var(--label-w)
+      calc(52 * var(--cell-d) + 51 * var(--cell-gap));
+  }
+  .weeks {
+    grid-template-columns: repeat(52, var(--cell-d));
+  }
+}
+
+/* Print */
 @media print {
   .wrapper {
     border: none;

@@ -1,5 +1,5 @@
 :root {
-  /* Light theme is the default */
+  /* Light theme (default) */
   --c-bg: #ffffff;
   --c-text: #111213;
   --c-text-muted: #666a70;
@@ -14,12 +14,15 @@
   --c-accent: #2d74ff;
   --c-danger: #d33a2c;
 
-  /* spacing & sizing */
+  /* spacing & sizes (desktop fluid; móvil usa tamaño fijo por celda) */
   --cell-gap: clamp(2px, 0.45vw, 8px);
   --label-w: clamp(22px, 2.2vw, 32px);
+
+  /* tamaño de celda para móvil (usado cuando hay scroll horizontal) */
+  --cell-d: 14px;
 }
 
-/* Dark overrides when user toggles it */
+/* Dark overrides */
 :root[data-theme="dark"] {
   --c-bg: #0e0f12;
   --c-text: #e8eaed;
@@ -34,10 +37,11 @@
   --c-input: #15171b;
 }
 
-/* Extra-tight spacing on very small phones */
+/* Ajustes en móviles muy pequeños */
 @media (max-width: 480px) {
   :root {
     --cell-gap: 2px;
     --label-w: 18px;
+    --cell-d: 12px;     /* puntitos un poco más chicos */
   }
 }
