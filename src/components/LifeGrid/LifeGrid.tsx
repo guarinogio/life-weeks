@@ -19,31 +19,34 @@ export default function LifeGrid({ birthDateISO, years = 80 }: Props) {
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.headerRow}>
-        <div className={styles.labelSpacer} />
-        <WeekHeader />
-      </div>
-
-      {rows.map((year) => (
-        <div key={year} className={styles.row}>
-          <YearLabel value={year} />
-          <div className={styles.weeks}>
-            {cols.map((w) => {
-              const k = year * 52 + w;
-              let state: "past" | "current" | "future" = "future";
-              if (k < livedWeeks) state = "past";
-              else if (k === currentIndex) state = "current";
-              return (
-                <WeekCell
-                  key={w}
-                  state={state}
-                  title={`Year ${year}, week ${w + 1}`}
-                />
-              );
-            })}
-          </div>
+      {/* scroller agrupa cabecera + filas para que se desplacen juntas en móvil */}
+      <div className={styles.scroller}>
+        <div className={styles.headerRow}>
+          <div className={styles.labelSpacer} />
+          <WeekHeader />
         </div>
-      ))}
+
+        {rows.map((year) => (
+          <div key={year} className={styles.row}>
+            <YearLabel value={year} />
+            <div className={styles.weeks}>
+              {cols.map((w) => {
+                const k = year * 52 + w;
+                let state: "past" | "current" | "future" = "future";
+                if (k < livedWeeks) state = "past";
+                else if (k === currentIndex) state = "current";
+                return (
+                  <WeekCell
+                    key={w}
+                    state={state}
+                    title={`Year ${year}, week ${w + 1}`}
+                  />
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

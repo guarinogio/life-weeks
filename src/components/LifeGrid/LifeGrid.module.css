@@ -1,4 +1,4 @@
-/* Wrapper: por defecto sin scroll (desktop/tablet) */
+/* Contenedor general (bordes y padding vertical) */
 .wrapper {
   padding: 10px 0 18px 0;
   margin-top: 8px;
@@ -6,6 +6,13 @@
   border-bottom: 1px solid var(--c-grid);
 }
 
+/* Agrupa cabecera + filas.
+   En móvil esta capa es la que hace el scroll horizontal */
+.scroller {
+  /* desktop/tablet: sin scroll; móvil se activa más abajo */
+}
+
+/* Estructura en 2 columnas: etiqueta de año + contenido (cabecera/semana) */
 .headerRow,
 .row {
   display: grid;
@@ -13,7 +20,7 @@
   align-items: center;
 }
 
-/* ---- Week header (numbers) ---- */
+/* ---- Cabecera de semanas (números) ---- */
 .weekHeader {
   display: grid;
   grid-template-columns: repeat(52, 1fr);
@@ -21,9 +28,11 @@
   color: var(--c-text-muted);
   font-size: 11px;
   font-variant-numeric: tabular-nums;
-  margin-bottom: 6px;
   text-align: center;
+  /* misma separación vertical que las filas para evitar “saltos” */
+  margin: 0;
 }
+
 .weekMinor {
   opacity: 0.6;
 }
@@ -43,30 +52,54 @@
   width: var(--label-w);
 }
 
+/* ---- Year label: no debe estirar la fila ---- */
+.yearLabel {
+  width: var(--label-w);
+  color: var(--c-text-muted);
+  font-size: 12px;
+  line-height: 1;          /* evita que line-height agrande la fila */
+  height: 100%;            /* toma la altura de la fila (definida por los puntos) */
+  display: flex;
+  align-items: center;      /* centra verticalmente dentro de la fila */
+  justify-content: flex-end;
+  padding-right: 2px;       /* pequeño respiro antes de los puntos */
+}
+
+@media (max-width: 480px) {
+  .yearLabel {
+    font-size: 11px;
+  }
+}
+
 .weeks {
   display: grid;
   grid-template-columns: repeat(52, 1fr);
   gap: var(--cell-gap);
 }
 
+/* Distancia vertical uniforme entre filas */
 .row {
   margin-block: 8px;
 }
 
-/* ---- Mejora móvil: scroll horizontal y columnas de ancho fijo ---- */
+/* ---- Móvil: scroll horizontal y columnas de ancho fijo,
+   cabecera y grilla se mueven juntas ---- */
 @media (max-width: 600px) {
-  .wrapper {
-    overflow-x: auto;                /* habilita scroll horizontal */
+  .scroller {
+    overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
+
+  /* ancho total de la zona de semanas (52 celdas + 51 gaps) */
   .weekHeader {
-    grid-template-columns: repeat(52, var(--cell-d));  /* ancho fijo por celda */
-    min-width: calc(var(--label-w) + 52 * var(--cell-d) + 51 * var(--cell-gap));
+    grid-template-columns: repeat(52, var(--cell-d));
   }
+
   .row {
     grid-template-columns: var(--label-w)
       calc(52 * var(--cell-d) + 51 * var(--cell-gap));
   }
+
   .weeks {
     grid-template-columns: repeat(52, var(--cell-d));
   }
