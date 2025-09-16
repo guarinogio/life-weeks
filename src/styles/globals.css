@@ -1,17 +1,85 @@
-html, body, #root {
-  height: 100%;
+/* ====== Variables por defecto (desktop) ====== */
+:root {
+  /* layout (grid) */
+  --cell-d: 14px;     /* diámetro de cada círculo (desktop) */
+  --cell-gap: 6px;    /* separación entre columnas/filas */
+  --label-w: 36px;    /* ancho de la columna de años (izquierda) */
+  --label-gap: 8px;   /* separación número de año → puntos */
+
+  /* colores (tema claro por defecto) */
+  --c-bg: #ffffff;
+  --c-text: #111827;
+  --c-text-muted: #6b7280;
+  --c-border: #e5e7eb;
+  --c-grid: #e5e7eb;
+
+  --c-dot: #374151;
+  --c-dot-past: #384151;
+  --c-dot-current: #1e90ff;
+  --c-dot-future: #d1d5db;
+
+  --c-accent: #2563eb;
+}
+
+/* Tema oscuro */
+:root[data-theme="dark"] {
+  --c-bg: #0f1115;
+  --c-text: #e5e7eb;
+  --c-text-muted: #9ca3af;
+  --c-border: #1f2937;
+  --c-grid: #1f2937;
+
+  --c-dot: #3b4351;
+  --c-dot-past: #d1d5db;
+  --c-dot-current: #4fa3ff;
+  --c-dot-future: #3a3f46;
+
+  --c-accent: #60a5fa;
+}
+
+/* ====== Base ====== */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html, body, #root { height: 100%; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  max-width: 100%;
+  overflow-x: hidden;     /* evita overflow horizontal del documento */
+  background: var(--c-bg);
+  color: var(--c-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  margin: 0;
-  background: var(--c-bg);
-  color: var(--c-text);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", sans-serif;
+  line-height: 1.45;
 }
 
-a { color: inherit; }
-* { box-sizing: border-box; }
+/* Enlaces */
+a { color: inherit; text-decoration: none; }
+a:hover { text-decoration: underline; }
 
-html, body {
-  max-width: 100%;
-  overflow-x: hidden;   /* evita que el body capture el overflow del grid */
+/* Utilidades pequeñas */
+.container {
+  width: min(1100px, 92vw);
+  margin-inline: auto;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--c-grid);
+  margin: 12px 0;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  inline-size: 1px; block-size: 1px;
+  margin: -1px; border: 0; padding: 0;
+  clip: rect(0 0 0 0); clip-path: inset(50%);
+  overflow: hidden;
 }

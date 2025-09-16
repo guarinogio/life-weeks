@@ -1,40 +1,37 @@
 .wrap {
   width: 100%;
-  /* centrado + límite de ancho agradable en desktop */
   display: grid;
   place-items: start center;
 }
 
-/* El SVG ocupa todo el ancho disponible sin deformarse */
 .svg {
   width: min(1200px, 100%);
   height: auto;
   display: block;
 }
 
-/* Colores (heredan de tokens existentes) */
+/* Colores */
 .dotPast   { fill: var(--c-past);    stroke: var(--c-past); }
 .dotFuture { fill: transparent;      stroke: var(--c-future); }
 
-/* Punto actual: solo parpadeo (sin mover/escala) */
+/* Punto actual: solo parpadeo de opacidad (sin mover/escala) */
 .dotCurrent{
   fill: var(--c-current);
   stroke: var(--c-current);
   animation: blink 1.5s ease-in-out infinite;
 }
 
-/* Parpadeo de opacidad */
 @keyframes blink {
   0%, 100% { opacity: 1; }
   50%      { opacity: 0.55; }
 }
 
-/* Respeto a usuarios con reducción de movimiento: sin animación */
+/* Respeto a usuarios con reducción de movimiento */
 @media (prefers-reduced-motion: reduce) {
   .dotCurrent { animation: none; }
 }
 
-/* Tipografía de labels */
+/* Labels */
 .weekNumber, .yearLabel {
   fill: var(--c-text-muted);
   font-size: 11px;
@@ -44,14 +41,14 @@
 .weekMajor { font-weight: 600; }
 .weekMinor { opacity: .85; }
 
-/* En mobile ocultamos los números de semanas (para evitar saturación) */
+/* Ocultar números de semanas en mobile */
 @media (max-width: 600px) {
   .weekNumber { display: none; }
   .yearLabel  { font-size: 10px; }
 }
 
-/* Accesibilidad de foco para el círculo actual */
+/* Foco accesible (SVG) */
 circle:focus-visible {
   outline: 2px solid var(--c-accent);
-  outline-offset: 2px; /* no se aplica a SVG, pero mantiene consistencia */
+  outline-offset: 2px;
 }
