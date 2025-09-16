@@ -1,8 +1,8 @@
 .fab {
-  position: fixed; /* <-- clave para flotar */
+  position: fixed; /* flotante */
   right: clamp(12px, 3vw, 24px);
   bottom: clamp(12px, 3vw, 24px);
-  z-index: 1060; /* por encima del grid; debajo del drawer (1090/1100) */
+  z-index: 1060; /* encima del grid; debajo del drawer */
 
   inline-size: 48px;
   block-size: 48px;
@@ -36,10 +36,10 @@
   outline-offset: 2px;
 }
 
+/* Ocultar en mobile: no tiene sentido con el layout actual */
 @media (max-width: 600px) {
   .fab {
-    inline-size: 52px;
-    block-size: 52px;
+    display: none;
   }
 }
 
