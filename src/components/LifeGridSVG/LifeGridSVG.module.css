@@ -4,13 +4,14 @@
   place-items: start center;
 }
 
+/* El SVG ocupa todo el ancho disponible sin deformarse */
 .svg {
   width: min(1200px, 100%);
   height: auto;
   display: block;
 }
 
-/* Colores */
+/* ====== Dots / estados ====== */
 .dotPast   { fill: var(--c-past);    stroke: var(--c-past); }
 .dotFuture { fill: transparent;      stroke: var(--c-future); }
 
@@ -31,19 +32,24 @@
   .dotCurrent { animation: none; }
 }
 
-/* Labels */
-.weekNumber, .yearLabel {
+/* ====== Labels ====== */
+.weekNumber,
+.yearLabel {
   fill: var(--c-text-muted);
-  font-size: 11px;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell,
+    "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol";
   font-variant-numeric: tabular-nums;
+  font-size: 11px;
 }
-.weekMajor { font-weight: 600; }
-.weekMinor { opacity: .85; }
 
-/* Ocultar números de semanas en mobile */
+.weekMajor { font-weight: 600; }
+.weekMinor { opacity: 0.85; }
+
+/* ====== Mobile tweaks (mantener números visibles) ====== */
 @media (max-width: 600px) {
-  .weekNumber { display: none; }
+  /* En mobile NO ocultamos los números; sólo los hacemos más pequeños */
+  .weekNumber { font-size: 9px; }
   .yearLabel  { font-size: 10px; }
 }
 
