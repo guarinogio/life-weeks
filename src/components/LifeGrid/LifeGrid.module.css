@@ -13,31 +13,35 @@
   /* 1 columna para label + 52 columnas del tamaño del punto */
   grid-template-columns: var(--label-w) repeat(52, var(--cell-d));
   column-gap: var(--cell-gap);
-  width: max-content;          /* <- ancho solo lo que necesita */
+  width: max-content;          /* <- ancho sólo lo que necesita */
   margin-inline: auto;         /* <- centrado horizontal */
+
+  /* Evita desplazamientos subpíxel a diferentes zooms */
+  contain: layout paint;       /* fuerza al navegador a mantener cálculos consistentes */
+  box-sizing: border-box;
 }
 
-/* Cabecera de semanas: hereda columnas del contenedor */
+/* Cabecera de semanas: hereda columnas del contenedor (subgrid) */
 .weekHeader {
-  grid-column: 2 / -1;
+  grid-column: 2 / -1;                /* ocupa sólo columnas de semanas */
   display: grid;
-  grid-template-columns: subgrid;
+  grid-template-columns: subgrid;     /* hereda exactamente las 52 columnas */
   column-gap: inherit;
   color: var(--c-text-muted);
   font-size: 12px;
   font-variant-numeric: tabular-nums;
   line-height: 1;
   margin: 0;
-  justify-items: center;
+  justify-items: center;              /* centra cada número en su celda */
+  box-sizing: border-box;
 }
 .weekHeader > span {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
+  width: 100%;                        /* asegura mismo ancho que la celda */
 }
 
-/* Mostrar TODOS los números de semana */
 .weekMinor { visibility: visible; opacity: 0.85; }
 .weekMajor { visibility: visible; font-weight: 600; }
 
@@ -56,47 +60,61 @@
   padding-right: var(--label-gap);
   background: var(--c-bg);
   margin-block: 8px;
+  box-sizing: border-box;
 }
 
 /* Fila de puntos: subgrid */
 .weeks {
   grid-column: 2 / -1;
   display: grid;
-  grid-template-columns: subgrid;
+  grid-template-columns: subgrid;     /* mismas 52 columnas */
   column-gap: inherit;
   row-gap: var(--cell-gap);
   margin-block: 8px;
+  box-sizing: border-box;
 }
 
 /* ====== Mobile: scroll horizontal + sticky + compact ===================== */
 @media (max-width: 600px) {
+  :root {
+    --label-w: 28px;                   /* label más angosto en mobile */
+  }
+
   .scroller {
-    overflow-x: auto;
+    overflow-x: auto;                  /* scroll H */
     -webkit-overflow-scrolling: touch;
-    /* igual que desktop, pero ya está preparado para scrollear */
-    grid-template-columns: var(--label-w) repeat(52, var(--cell-d));
+    scroll-behavior: smooth;
+    scroll-padding-left: var(--label-w); /* al hacer “jump”, no quede bajo el label sticky */
+    /* seguimos usando el mismo template (ya es con var(--cell-d)) */
   }
 
   .weekHeader {
-    position: sticky;
+    position: sticky;                  /* sticky arriba */
     top: 0;
     z-index: 7;
     background: var(--c-bg);
     box-shadow: 0 1px 0 var(--c-grid);
     font-size: 10px;
+    /* evita micro-desplazamientos por fuentes/zoom */
+    transform: translateZ(0);
   }
 
   .yearLabel {
-    position: sticky;
+    position: sticky;                  /* sticky izquierda */
     left: 0;
     z-index: 6;
     box-shadow: 1px 0 0 var(--c-grid);
     background: var(--c-bg);
     font-size: 10px;
     margin-block: 4px;
+    transform: translateZ(0);
   }
 
   .weeks { row-gap: 1px; margin-block: 4px; }
+
+  /* En móvil mostramos TODOS los números también */
+  .weekMinor { visibility: visible; opacity: 0.85; }
+  .weekMajor { visibility: visible; }
 }
 
 /* Compact manual (si quisieras forzarlo en desktop) */
