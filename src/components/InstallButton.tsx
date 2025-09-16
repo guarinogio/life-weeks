@@ -48,11 +48,14 @@ export default function InstallButton() {
   const iconSrc = `${import.meta.env.BASE_URL}favicon.svg`;
 
   async function install() {
+    // Copiamos a una variable local para fijar el valor actual
+    const ev = deferred;
+    if (!ev) return;
+
     try {
-      await deferred.prompt();
-      const choice = await deferred.userChoice;
+      await ev.prompt();
+      const choice = await ev.userChoice;
       if (choice.outcome === "dismissed") {
-        // si lo rechazó explícitamente, no molestamos más
         localStorage.setItem(DISMISS_KEY, "1");
         setDismissed(true);
       } else {
