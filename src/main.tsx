@@ -9,28 +9,27 @@ import "./styles/globals.css";
 import "./styles/print.css";
 
 /**
- * Apply initial theme BEFORE mounting React.
- * Priority:
- *   1) user choice in localStorage ("lifeweeks.theme")
- *   2) system preference (prefers-color-scheme)
+ * Aplica el tema ANTES de montar React.
+ * Prioridad:
+ * 1) Preferencia guardada en localStorage ("lifeweeks.theme")
+ * 2) Preferencia del sistema (prefers-color-scheme)
  *
- * If no user choice is stored, the app follows system changes in real time
- * until the user explicitly toggles a theme (which persists to localStorage).
+ * Si NO hay preferencia guardada, seguimos al sistema en vivo.
  */
 (function applyInitialTheme() {
   const KEY = "lifeweeks.theme";
   const stored = localStorage.getItem(KEY) as "light" | "dark" | null;
 
-  const getSystemTheme = () =>
+  const systemTheme =
     window.matchMedia &&
     window.matchMedia("(prefers-color-scheme: dark)").matches
       ? "dark"
       : "light";
 
-  const initial: "light" | "dark" = stored ?? getSystemTheme();
+  const initial: "light" | "dark" = stored ?? systemTheme;
   document.documentElement.setAttribute("data-theme", initial);
 
-  // If there is no stored preference, keep syncing with system
+  // Sin preferencia del usuario → escuchar cambios del sistema
   if (!stored && window.matchMedia) {
     const mql = window.matchMedia("(prefers-color-scheme: dark)");
     const onChange = () => {
@@ -45,8 +44,7 @@ import "./styles/print.css";
     try {
       mql.addEventListener("change", onChange);
     } catch {
-      // Safari <14
-      mql.addListener(onChange);
+      mql.addListener(onChange); // Safari antiguo
     }
   }
 })();

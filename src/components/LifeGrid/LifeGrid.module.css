@@ -9,8 +9,7 @@
 /* Agrupa cabecera + filas (esta capa scrollea en móvil) */
 .scroller {}
 
-/* Dos columnas: etiqueta de año + contenido
-   -> SIN column-gap; separación con padding-right en label. */
+/* Dos columnas: etiqueta de año + contenido */
 .headerRow,
 .row {
   display: grid;
@@ -53,21 +52,13 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-
-  /* separación a la derecha SIN usar column-gap */
   padding-right: var(--label-gap);
   background: var(--c-bg);
 }
-
 .headerLabel {
-  /* esquina superior izquierda de la fila de cabecera */
   color: transparent;
   padding-right: var(--label-gap);
   background: var(--c-bg);
-}
-
-@media (max-width: 480px) {
-  .yearLabel { font-size: 11px; }
 }
 
 /* ---- Grid de semanas ---- */
@@ -80,7 +71,7 @@
 /* Distancia vertical uniforme entre filas */
 .row { margin-block: 8px; }
 
-/* ---- Móvil: scroll horizontal + sticky de columna izquierda y fila superior ---- */
+/* ---- Móvil: scroll horizontal + sticky + compact automático ---- */
 @media (max-width: 600px) {
   .scroller {
     overflow-x: auto;
@@ -88,9 +79,16 @@
     position: relative;
   }
 
+  /* tamaño de números más chico y centrado */
   .weekHeader {
     grid-template-columns: repeat(52, var(--cell-d));
+    font-size: 10px;             /* ↓↓↓ */
+    letter-spacing: 0.2px;
   }
+  .yearLabel {
+    font-size: 10px;             /* ↓↓↓ */
+  }
+
   .row {
     grid-template-columns: var(--label-w)
       calc(52 * var(--cell-d) + 51 * var(--cell-gap));
@@ -118,12 +116,12 @@
     box-shadow: 0 1px 0 var(--c-grid);
   }
 
-  /* --- Compact automático en mobile --- */
+  /* Compact automático */
   .weeks { gap: 1px; }
   .row { margin-block: 4px; }
 }
 
-/* --- Compact manual: puedes forzarlo con .compact en cualquier tamaño --- */
+/* Compact manual (para forzar en desktop si querés) */
 .compact .weeks { gap: 1px; }
 .compact .row { margin-block: 4px; }
 
