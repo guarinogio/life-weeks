@@ -68,7 +68,6 @@ export default function LifeGridSVG({ birthDateISO, years = 80 }: Props) {
     const onDocClick = (e: MouseEvent) => {
       if (!tip) return;
       const el = e.target as Element;
-      // Si clic dentro del tooltip, no cerrar
       if (el.closest?.(`.${styles.tooltip}`)) return;
       hideTip();
     };
@@ -91,7 +90,6 @@ export default function LifeGridSVG({ birthDateISO, years = 80 }: Props) {
     if (focusedIdx == null) return;
     const c = circles[focusedIdx];
     if (!c) return;
-    // Anunciar en aria-live
     if (liveRef.current) liveRef.current.textContent = c.label;
   }, [focusedIdx, circles]);
 
@@ -108,7 +106,7 @@ export default function LifeGridSVG({ birthDateISO, years = 80 }: Props) {
   const handleKey = (idx: number, e: React.KeyboardEvent<SVGCircleElement>) => {
     let next = idx;
     const row = Math.floor(idx / 52);
-    const col = idx % 52;
+    // NOTE: col was unused; removed to fix TS6133
 
     switch (e.key) {
       case "ArrowLeft":
@@ -124,25 +122,24 @@ export default function LifeGridSVG({ birthDateISO, years = 80 }: Props) {
         next = Math.min(total - 1, idx + 52);
         break;
       case "Home":
-        next = row * 52; // inicio de la fila
+        next = row * 52;
         break;
       case "End":
-        next = row * 52 + 51; // fin de la fila
+        next = row * 52 + 51;
         break;
       case "PageUp":
-        next = Math.max(0, idx - 52 * 5); // subir 5 años
+        next = Math.max(0, idx - 52 * 5);
         break;
       case "PageDown":
-        next = Math.min(total - 1, idx + 52 * 5); // bajar 5 años
+        next = Math.min(total - 1, idx + 52 * 5);
         break;
       case "Enter":
       case " ":
-        // Toggle tooltip en teclado
         e.preventDefault();
         showTooltipForIndex(idx);
         return;
       default:
-        return; // no prevenir otros atajos
+        return;
     }
     e.preventDefault();
     focusIndex(next);
@@ -156,7 +153,7 @@ export default function LifeGridSVG({ birthDateISO, years = 80 }: Props) {
     const rect = el.getBoundingClientRect();
     setTip({
       x: rect.left + rect.width / 2,
-      y: rect.top - 8, // encima del punto
+      y: rect.top - 8,
       text: circles[idx]?.label ?? "",
     });
   };
@@ -187,7 +184,7 @@ export default function LifeGridSVG({ birthDateISO, years = 80 }: Props) {
           highlighted, and remaining weeks.
         </desc>
 
-        {/* ----- Header: weeks (1..52). En mobile se ven (tamaño menor vía CSS) ----- */}
+        {/* Header: weeks (1..52) */}
         {Array.from({ length: 52 }, (_, i) => {
           const n = i + 1;
           const x = LABEL_W + i * (D + GAP) + D / 2;
@@ -209,7 +206,7 @@ export default function LifeGridSVG({ birthDateISO, years = 80 }: Props) {
           );
         })}
 
-        {/* ----- Left: years (solo múltiplos de 5) ----- */}
+        {/* Years left (0,5,10,...) */}
         {Array.from({ length: years }, (_, y) => {
           if (y % 5 !== 0) return null;
           const x = LABEL_W - 8;
@@ -228,7 +225,7 @@ export default function LifeGridSVG({ birthDateISO, years = 80 }: Props) {
           );
         })}
 
-        {/* ----- Dots (past/current/future) + interacción ----- */}
+        {/* Dots */}
         {circles.map(({ cx, cy, k, state, label }) => {
           const cls =
             state === "current"
@@ -254,14 +251,13 @@ export default function LifeGridSVG({ birthDateISO, years = 80 }: Props) {
                 showTooltipForIndex(k);
               }}
             >
-              {/* Título nativo (hover en desktop) */}
               <title>{label}</title>
             </circle>
           );
         })}
       </motion.svg>
 
-      {/* Tooltip flotante (para tap/click/teclado) */}
+      {/* Tooltip flotante */}
       {tip && (
         <div
           className={styles.tooltip}
