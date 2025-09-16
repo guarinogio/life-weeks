@@ -4,21 +4,16 @@
   border-radius: 50%;
   border: 1px solid var(--c-future);
   background: transparent;
+  transition: background-color 180ms ease, border-color 180ms ease, transform 120ms ease;
+}
+.past { background: var(--c-past); border-color: var(--c-past); }
+.current { background: var(--c-current); border-color: var(--c-current); }
+.future { background: transparent; border-color: var(--c-future); }
 
-  /* Transiciones suaves (tema/estado) */
-  transition: background-color 180ms ease, border-color 180ms ease;
-}
-.past {
-  background: var(--c-past);
-  border-color: var(--c-past);
-}
-.current {
-  background: var(--c-current);
-  border-color: var(--c-current);
-}
-.future {
-  background: transparent;
-  border-color: var(--c-future);
+.cell:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 2px;
+  transform: scale(1.3);
 }
 
 @media (prefers-reduced-motion: reduce) {

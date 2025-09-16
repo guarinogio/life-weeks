@@ -7,12 +7,14 @@ type Props = {
 };
 
 const WeekCell = React.forwardRef<HTMLDivElement, Props & React.HTMLAttributes<HTMLDivElement>>(
-  ({ state, title, ...rest }, ref) => {
+  ({ state, title, tabIndex = -1, ...rest }, ref) => {
     return (
       <div
         ref={ref}
         className={`${styles.cell} ${styles[state]}`}
         title={title}
+        role="button"
+        tabIndex={tabIndex}
         {...rest}
       />
     );

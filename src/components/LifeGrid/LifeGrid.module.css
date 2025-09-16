@@ -29,14 +29,12 @@
   margin: 0;
   justify-items: center; /* centra cada número en su columna */
 }
-
 .weekHeader > span {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 100%;
 }
-
 .weekMinor { opacity: 0.6; }
 .weekMajor { opacity: 1; font-weight: 500; }
 
@@ -55,12 +53,15 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding-right: var(--label-gap); /* separación sin usar column-gap */
+
+  /* separación a la derecha SIN usar column-gap */
+  padding-right: var(--label-gap);
   background: var(--c-bg);
 }
 
 .headerLabel {
-  color: transparent;          /* esquina superior izquierda */
+  /* esquina superior izquierda de la fila de cabecera */
+  color: transparent;
   padding-right: var(--label-gap);
   background: var(--c-bg);
 }
@@ -69,6 +70,7 @@
   .yearLabel { font-size: 11px; }
 }
 
+/* ---- Grid de semanas ---- */
 .weeks {
   display: grid;
   grid-template-columns: repeat(52, 1fr);
@@ -115,7 +117,15 @@
     background: var(--c-bg);
     box-shadow: 0 1px 0 var(--c-grid);
   }
+
+  /* --- Compact automático en mobile --- */
+  .weeks { gap: 1px; }
+  .row { margin-block: 4px; }
 }
+
+/* --- Compact manual: puedes forzarlo con .compact en cualquier tamaño --- */
+.compact .weeks { gap: 1px; }
+.compact .row { margin-block: 4px; }
 
 /* Print */
 @media print {

@@ -9,10 +9,11 @@ import { motion, useReducedMotion, type Variants } from "framer-motion";
 
 interface Props {
   birthDateISO: string;
-  years?: number; // default 80
+  years?: number;
+  compact?: boolean; // new: reduce density on mobile
 }
 
-export default function LifeGrid({ birthDateISO, years = 80 }: Props) {
+export default function LifeGrid({ birthDateISO, years = 80, compact = false }: Props) {
   const livedWeeks = weeksBetween(birthDateISO);
   const total = years * 52;
   const currentIndex = Math.min(livedWeeks, total - 1);
@@ -22,20 +23,29 @@ export default function LifeGrid({ birthDateISO, years = 80 }: Props) {
 
   const currentRef = useRef<HTMLDivElement | null>(null);
 
-  // Variants tipadas; evitamos declarar "ease" si tu versión no lo tipa como string
   const reduced = useReducedMotion();
   const variants: Variants = {
     hidden: { opacity: 0, y: reduced ? 0 : 10 },
     visible: { opacity: 1, y: 0 },
   };
 
+  // helper para rango de fechas por semana
+  function getWeekRange(startISO: string, weekIndex: number): string {
+    const start = new Date(startISO);
+    start.setDate(start.getDate() + weekIndex * 7);
+    const end = new Date(start);
+    end.setDate(start.getDate() + 6);
+    const fmt = (d: Date) => d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+    return `${fmt(start)} – ${fmt(end)}`;
+  }
+
   return (
     <motion.section
-      className={styles.wrapper}
+      className={`${styles.wrapper} ${compact ? styles.compact : ""}`}
       variants={variants}
       initial="hidden"
       animate="visible"
-      transition={{ duration: 0.45, ease: [0.25, 0.1, 0.25, 1] as const }}
+      transition={{ duration: 0.45 }}
     >
       <div className={styles.scroller}>
         <div className={styles.headerRow}>
@@ -54,13 +64,17 @@ export default function LifeGrid({ birthDateISO, years = 80 }: Props) {
                 else if (k === currentIndex) state = "current";
 
                 const isCurrent = state === "current";
+                const label = `Year ${year}, week ${w + 1}. ${getWeekRange(birthDateISO, k)}`;
+
                 return (
                   <WeekCell
                     key={w}
                     state={state}
-                    title={`Year ${year}, week ${w + 1}`}
+                    title={label}
+                    aria-label={label}
                     ref={isCurrent ? currentRef : undefined}
                     data-current={isCurrent ? "true" : undefined}
+                    tabIndex={isCurrent ? 0 : -1}
                   />
                 );
               })}

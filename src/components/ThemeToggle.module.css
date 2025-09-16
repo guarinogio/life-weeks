@@ -1,24 +1,40 @@
 .btn {
-  position: fixed;     /* esquina superior derecha de la página */
-  top: 14px;
-  right: 14px;
-  inline-size: 36px;
-  block-size: 36px;
+  position: fixed;     /* se mantiene fijo en pantalla */
+  top: 16px;
+  right: 16px;
+  z-index: 1000;
+
+  inline-size: 40px;
+  block-size: 40px;
   display: grid;
   place-items: center;
-  border-radius: 999px;
+
+  border-radius: 50%;
   border: 1px solid var(--c-border);
   background: var(--c-bg);
   color: var(--c-text);
+  font-size: 18px;
   cursor: pointer;
-  box-shadow: 0 2px 10px color-mix(in oklab, black 12%, transparent);
+
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
 }
 
 .btn:hover {
-  background: color-mix(in oklab, var(--c-bg) 90%, var(--c-text) 10%);
+  transform: scale(1.05);
+}
+
+.btn:active {
+  transform: scale(0.95);
 }
 
 .btn:focus-visible {
   outline: 2px solid var(--c-accent);
   outline-offset: 2px;
+}
+
+@media print {
+  .btn {
+    display: none;
+  }
 }
