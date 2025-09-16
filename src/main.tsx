@@ -8,6 +8,8 @@ import "./styles/tokens.css";
 import "./styles/globals.css";
 import "./styles/print.css";
 
+import { setupPWA } from "./pwa";
+
 /**
  * Aplica el tema ANTES de montar React.
  * Prioridad:
@@ -48,6 +50,8 @@ import "./styles/print.css";
     }
   }
 })();
+
+setupPWA();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

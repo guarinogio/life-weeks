@@ -8,6 +8,7 @@ import Legend from "../components/Legend";
 import SummaryBar from "../components/SummaryBar";
 import ThemeToggle from "../components/ThemeToggle";
 import JumpToCurrent from "../components/JumpToCurrent";
+import InstallButton from "../components/InstallButton";   // ⬅️ nuevo
 import styles from "./App.module.css";
 
 export default function App() {
@@ -40,11 +41,10 @@ export default function App() {
 
           <SummaryBar stats={stats!} age={age!} />
           <LifeGrid birthDateISO={dobISO} years={expectancy} />
-
-          {/* Legend now shows life expectancy */}
           <Legend expectancy={expectancy} />
 
           <JumpToCurrent />
+          <InstallButton />   {/* ⬅️ aquí */}
 
           <footer className={styles.footer}>
             <small>
