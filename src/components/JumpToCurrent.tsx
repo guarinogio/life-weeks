@@ -1,22 +1,34 @@
 import styles from "./JumpToCurrent.module.css";
 
 export default function JumpToCurrent() {
-  function jump() {
-    const el = document.querySelector<HTMLElement>('[data-current="true"]');
-    if (!el) return;
-    el.scrollIntoView({
-      behavior: "smooth",
-      block: "center",
-      inline: "center",
-    });
-  }
+  const onClick = () => {
+    const current =
+      (document.getElementById("current-week-dot") as
+        | (HTMLElement & { scrollIntoView: (opts?: any) => void })
+        | (SVGElement & { scrollIntoView: (opts?: any) => void })
+        | null);
+
+    if (current?.scrollIntoView) {
+      current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+        inline: "center",
+      });
+      (current as any).focus?.({ preventScroll: true });
+      return;
+    }
+
+    const svg = document.getElementById("life-grid-svg");
+    svg?.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+  };
 
   return (
     <button
-      className={styles.btn}
-      onClick={jump}
+      className={styles.fab}
+      type="button"
       aria-label="Jump to current week"
       title="Jump to current week"
+      onClick={onClick}
     >
       <TargetIcon />
     </button>
@@ -24,30 +36,11 @@ export default function JumpToCurrent() {
 }
 
 function TargetIcon() {
-  // Crosshair / target icon. Uses currentColor for stroke/fill.
   return (
-    <svg
-      viewBox="0 0 24 24"
-      width="20"
-      height="20"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <circle cx="12" cy="12" r="3" fill="currentColor" />
-      <circle
-        cx="12"
-        cy="12"
-        r="8"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-      />
+    <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
       <path
-        d="M12 2v3M12 19v3M2 12h3M19 12h3"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        fill="none"
+        fill="currentColor"
+        d="M11 2h2v3.06a7.002 7.002 0 0 1 5.94 5.94H22v2h-3.06a7.002 7.002 0 0 1-5.94 5.94V22h-2v-3.06A7.002 7.002 0 0 1 5.06 13H2v-2h3.06A7.002 7.002 0 0 1 11 5.06V2Zm1 5a5 5 0 1 0 .001 10.001A5 5 0 0 0 12 7Zm0 3a2 2 0 1 1-.001 4.001A2 2 0 0 1 12 10Z"
       />
     </svg>
   );

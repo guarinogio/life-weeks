@@ -106,7 +106,6 @@ export default function LifeGridSVG({ birthDateISO, years = 80 }: Props) {
   const handleKey = (idx: number, e: React.KeyboardEvent<SVGCircleElement>) => {
     let next = idx;
     const row = Math.floor(idx / 52);
-    // NOTE: col was unused; removed to fix TS6133
 
     switch (e.key) {
       case "ArrowLeft":
@@ -168,6 +167,7 @@ export default function LifeGridSVG({ birthDateISO, years = 80 }: Props) {
       <div ref={liveRef} className={styles.srOnly} aria-live="polite" />
 
       <motion.svg
+        id="life-grid-svg"
         ref={svgRef}
         className={styles.svg}
         viewBox={`0 0 ${width} ${height}`}
@@ -237,6 +237,7 @@ export default function LifeGridSVG({ birthDateISO, years = 80 }: Props) {
           return (
             <circle
               key={k}
+              id={state === "current" ? "current-week-dot" : undefined}
               data-idx={k}
               cx={cx}
               cy={cy}
