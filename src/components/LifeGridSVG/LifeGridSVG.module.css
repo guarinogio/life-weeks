@@ -2,9 +2,9 @@
   width: 100%;
   display: grid;
   place-items: start center;
+  position: relative;
 }
 
-/* El SVG ocupa todo el ancho disponible sin deformarse */
 .svg {
   width: min(1200px, 100%);
   height: auto;
@@ -27,7 +27,6 @@
   50%      { opacity: 0.55; }
 }
 
-/* Respeto a usuarios con reducción de movimiento */
 @media (prefers-reduced-motion: reduce) {
   .dotCurrent { animation: none; }
 }
@@ -42,15 +41,39 @@
   font-variant-numeric: tabular-nums;
   font-size: 11px;
 }
-
 .weekMajor { font-weight: 600; }
 .weekMinor { opacity: 0.85; }
 
-/* ====== Mobile tweaks (mantener números visibles) ====== */
+/* Mobile: mantener números visibles pero más pequeños */
 @media (max-width: 600px) {
-  /* En mobile NO ocultamos los números; sólo los hacemos más pequeños */
   .weekNumber { font-size: 9px; }
   .yearLabel  { font-size: 10px; }
+}
+
+/* ====== Tooltip flotante ====== */
+.tooltip {
+  position: fixed; /* posicionado desde el centro del círculo (viewport coords) */
+  transform: translate(-50%, -100%); /* centrar x y colocar arriba */
+  translate: 0 -8px; /* separación del punto */
+  z-index: 1000;
+  background: var(--c-bg);
+  color: var(--c-text);
+  border: 1px solid var(--c-border);
+  border-radius: 10px;
+  padding: 6px 10px;
+  font-size: 12px;
+  box-shadow: 0 6px 24px rgba(0,0,0,.18);
+  pointer-events: auto;
+  max-width: min(80vw, 320px);
+}
+
+/* ====== A11y: visually hidden ====== */
+.srOnly {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0);
+  white-space: nowrap; border: 0;
 }
 
 /* Foco accesible (SVG) */
