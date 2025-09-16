@@ -1,82 +1,96 @@
-import {
-  differenceInCalendarDays,
-  differenceInYears,
-  format,
-  isValid,
-  parse,
-  startOfDay,
-} from "date-fns";
+/**
+ * Utilidades de fecha para Life Weeks.
+ * Todas las funciones usan fechas en UTC para evitar desfases por timezone.
+ */
+
+/** Crea un Date en UTC a partir de un YYYY, MM (1-12), DD (1-31). */
+function utcDate(y: number, m: number, d: number): Date {
+  return new Date(Date.UTC(y, m - 1, d));
+}
+
+/** Valida componentes de fecha (en rangos básicos y fecha real del calendario). */
+function isValidDateParts(d: number, m: number, y: number): boolean {
+  if (!Number.isInteger(d) || !Number.isInteger(m) || !Number.isInteger(y)) return false;
+  if (y < 1900 || y > 9999) return false;
+  if (m < 1 || m > 12) return false;
+  if (d < 1 || d > 31) return false;
+  const test = utcDate(y, m, d);
+  return (
+    test.getUTCFullYear() === y &&
+    test.getUTCMonth() === m - 1 &&
+    test.getUTCDate() === d
+  );
+}
 
 /**
- * Parses "dd/mm/yyyy" to ISO ("yyyy-MM-dd").
- * Returns null when:
- *  - format is invalid
- *  - date is in the future
- *  - (optional) age exceeds maxAgeYears
+ * Parsea tres campos (día, mes, año) y devuelve un ISO `YYYY-MM-DD` en UTC.
+ * Retorna `null` si la fecha no es válida.
  */
 export function parseDMYToISO(
-  dmy: string,
-  maxAgeYears?: number
+  day: string,
+  month: string,
+  year: string
 ): string | null {
-  const re = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
-  const m = dmy.trim().match(re);
-  if (!m) return null;
+  const d = Number(day);
+  const m = Number(month);
+  const y = Number(year);
+  if (!isValidDateParts(d, m, y)) return null;
 
-  const d = parse(`${m[1]}/${m[2]}/${m[3]}`, "d/M/yyyy", new Date());
-  if (!isValid(d)) return null;
-
-  const today = startOfDay(new Date());
-  const dob = startOfDay(d);
-
-  // future date not allowed
-  if (dob > today) return null;
-
-  // reject if older than maxAgeYears (allow exactly == max)
-  if (typeof maxAgeYears === "number") {
-    const years = differenceInYears(today, dob); // full years
-    if (years > maxAgeYears) return null;
-  }
-
-  return format(dob, "yyyy-MM-dd");
+  const dd = String(d).padStart(2, "0");
+  const mm = String(m).padStart(2, "0");
+  const yyyy = String(y).padStart(4, "0");
+  return `${yyyy}-${mm}-${dd}`;
 }
 
-export function weeksBetween(dobISO: string, date = new Date()): number {
-  // full weeks elapsed
-  const dob = startOfDay(new Date(dobISO));
-  const today = startOfDay(date);
-  const days = differenceInCalendarDays(today, dob);
-  const lived = Math.floor(Math.max(0, days) / 7);
-  return lived;
+/** Semanas completas entre DOB e “ahora” (UTC). */
+export function weeksBetween(birthDateISO: string): number {
+  const birth = new Date(birthDateISO);
+  const now = new Date();
+  const msPerWeek = 7 * 24 * 60 * 60 * 1000;
+  const diff = now.getTime() - birth.getTime();
+  return Math.max(0, Math.floor(diff / msPerWeek));
 }
 
-export function ageBreakdown(dobISO: string) {
-  const dob = startOfDay(new Date(dobISO));
-  const today = startOfDay(new Date());
-  let years = today.getFullYear() - dob.getFullYear();
-  let months = today.getMonth() - dob.getMonth();
-  let days = today.getDate() - dob.getDate();
+/** Desglose de edad aproximado (años/meses/días) en calendario gregoriano. */
+export function ageBreakdown(birthDateISO: string) {
+  const birth = new Date(birthDateISO);
+  const now = new Date();
+
+  let years = now.getFullYear() - birth.getFullYear();
+  let months = now.getMonth() - birth.getMonth();
+  let days = now.getDate() - birth.getDate();
 
   if (days < 0) {
-    const prevMonth = new Date(today.getFullYear(), today.getMonth(), 0);
-    days += prevMonth.getDate();
     months -= 1;
+    const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+    days += prevMonth.getDate();
   }
   if (months < 0) {
-    months += 12;
     years -= 1;
+    months += 12;
   }
-  if (years < 0) years = 0;
-
   return { years, months, days };
 }
 
-export function nextBirthday(dobISO: string): Date {
-  const dob = new Date(dobISO);
-  const today = new Date();
-  const year =
-    today.getMonth() > dob.getMonth() ||
-    (today.getMonth() === dob.getMonth() && today.getDate() >= dob.getDate())
-      ? today.getFullYear() + 1
-      : today.getFullYear();
-  return new Date(year, dob.getMonth(), dob.getDate());
+/**
+ * Semana ISO (1..52/53) para una fecha dada.
+ * Algoritmo: mover al jueves de su semana y contar desde el 1 de enero ISO.
+ */
+export function isoWeek(date: Date): number {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const day = d.getUTCDay() || 7; // 1..7 (lunes=1)
+  d.setUTCDate(d.getUTCDate() + 4 - day); // ir al jueves de la misma semana
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  const diffDays = Math.floor((d.getTime() - yearStart.getTime()) / 86400000) + 1;
+  return Math.ceil(diffDays / 7);
+}
+
+/**
+ * Número de semanas ISO en un año (52 o 53).
+ * Se deriva consultando la semana ISO del 31 de diciembre.
+ */
+export function isoWeeksInYear(year: number): number {
+  const dec31 = new Date(Date.UTC(year, 11, 31));
+  const wk = isoWeek(dec31);
+  return wk === 1 ? 52 : wk;
 }
