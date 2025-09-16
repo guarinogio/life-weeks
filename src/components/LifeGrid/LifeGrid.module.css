@@ -6,24 +6,23 @@
   border-bottom: 1px solid var(--c-grid);
 }
 
-/* Agrupa cabecera + filas (esta capa scrollea en móvil) */
-.scroller {}
-
-/* Dos columnas: etiqueta de año + contenido
-   -> SIN column-gap; separación con padding-right en label. */
-.headerRow,
-.row {
+/* ====== GRID PRINCIPAL (subgrid para alineación perfecta) =============== */
+/* Desktop: ancho intrínseco -> centrado con margin-inline:auto */
+.scroller {
   display: grid;
-  grid-template-columns: var(--label-w) 1fr;
-  align-items: center;
+  /* 1 columna para label + 52 columnas del tamaño del punto */
+  grid-template-columns: var(--label-w) repeat(52, var(--cell-d));
+  column-gap: var(--cell-gap);
+  width: max-content;          /* <- ancho solo lo que necesita */
+  margin-inline: auto;         /* <- centrado horizontal */
 }
 
-/* ---- Cabecera de semanas ----
-   ¡Mismas 52 columnas y mismo gap que .weeks! */
+/* Cabecera de semanas: hereda columnas del contenedor */
 .weekHeader {
+  grid-column: 2 / -1;
   display: grid;
-  grid-template-columns: repeat(52, 1fr);
-  gap: var(--cell-gap);
+  grid-template-columns: subgrid;
+  column-gap: inherit;
   color: var(--c-text-muted);
   font-size: 12px;
   font-variant-numeric: tabular-nums;
@@ -38,94 +37,74 @@
   width: 100%;
 }
 
-/* Desktop: solo múltiplos de 5 visibles (manteniendo ancho) */
-.weekMinor { visibility: hidden; }
-.weekMajor { visibility: visible; font-weight: 500; }
+/* Mostrar TODOS los números de semana */
+.weekMinor { visibility: visible; opacity: 0.85; }
+.weekMajor { visibility: visible; font-weight: 600; }
 
-/* ---- Etiqueta de año (y celda vacía de cabecera) ---- */
+/* Filas (display: contents para colocar hijos en el grid del contenedor) */
+.row { display: contents; }
+
+/* Etiqueta de año (columna 1) */
 .yearLabel {
-  width: var(--label-w);
+  grid-column: 1;
   color: var(--c-text-muted);
   font-size: 12px;
   line-height: 1;
-  height: 100%;
   display: flex;
   align-items: center;
   justify-content: flex-end;
   padding-right: var(--label-gap);
   background: var(--c-bg);
-}
-.headerLabel {
-  color: transparent;
-  padding-right: var(--label-gap);
-  background: var(--c-bg);
+  margin-block: 8px;
 }
 
-/* ---- Grid de semanas ---- */
+/* Fila de puntos: subgrid */
 .weeks {
+  grid-column: 2 / -1;
   display: grid;
-  grid-template-columns: repeat(52, 1fr);
-  gap: var(--cell-gap);
+  grid-template-columns: subgrid;
+  column-gap: inherit;
+  row-gap: var(--cell-gap);
+  margin-block: 8px;
 }
 
-/* Distancia vertical uniforme entre filas */
-.row { margin-block: 8px; }
-
-/* ---- Móvil: scroll horizontal + sticky + compact automático ---- */
+/* ====== Mobile: scroll horizontal + sticky + compact ===================== */
 @media (max-width: 600px) {
   .scroller {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    position: relative;
+    /* igual que desktop, pero ya está preparado para scrollear */
+    grid-template-columns: var(--label-w) repeat(52, var(--cell-d));
   }
 
-  /* Mismas columnas y gap, pero columnas de ancho fijo */
   .weekHeader {
-    grid-template-columns: repeat(52, var(--cell-d));
-    font-size: 10px;
-  }
-  .row {
-    grid-template-columns: var(--label-w)
-      calc(52 * var(--cell-d) + 51 * var(--cell-gap));
-  }
-  .weeks {
-    grid-template-columns: repeat(52, var(--cell-d));
-  }
-
-  /* Columna izquierda SIEMPRE visible */
-  .yearLabel,
-  .headerLabel {
-    position: sticky;
-    left: 0;
-    z-index: 6;
-    box-shadow: 1px 0 0 var(--c-grid);
-    background: var(--c-bg);
-  }
-
-  /* Fila superior SIEMPRE visible */
-  .headerRow {
     position: sticky;
     top: 0;
     z-index: 7;
     background: var(--c-bg);
     box-shadow: 0 1px 0 var(--c-grid);
+    font-size: 10px;
   }
 
-  /* Compact automático */
-  .weeks { gap: 1px; }
-  .row { margin-block: 4px; }
+  .yearLabel {
+    position: sticky;
+    left: 0;
+    z-index: 6;
+    box-shadow: 1px 0 0 var(--c-grid);
+    background: var(--c-bg);
+    font-size: 10px;
+    margin-block: 4px;
+  }
 
-  /* También en móvil ocultamos los intermedios pero mantienen ancho */
-  .weekMinor { visibility: hidden; }
-  .weekMajor { visibility: visible; }
+  .weeks { row-gap: 1px; margin-block: 4px; }
 }
 
-/* Compact manual (por si querés forzarlo en desktop) */
-.compact .weeks { gap: 1px; }
-.compact .row { margin-block: 4px; }
+/* Compact manual (si quisieras forzarlo en desktop) */
+.compact .weeks { row-gap: 1px; }
+.compact .yearLabel, .compact .weeks { margin-block: 4px; }
 
 /* Print */
 @media print {
   .wrapper { border: none; padding: 0; margin: 0; }
-  .row { margin-block: 6px; }
+  .yearLabel, .weeks { margin-block: 6px; }
 }

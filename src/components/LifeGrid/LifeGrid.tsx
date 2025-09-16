@@ -1,19 +1,15 @@
 import { useRef } from "react";
 import { weeksBetween } from "../../lib/date";
-import YearLabel from "./YearLabel";
-import WeekHeader from "./WeekHeader";
 import WeekCell from "./WeekCell";
 import styles from "./LifeGrid.module.css";
-
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 
 interface Props {
   birthDateISO: string;
-  years?: number;
-  compact?: boolean; // new: reduce density on mobile
+  years?: number; // default 80
 }
 
-export default function LifeGrid({ birthDateISO, years = 80, compact = false }: Props) {
+export default function LifeGrid({ birthDateISO, years = 80 }: Props) {
   const livedWeeks = weeksBetween(birthDateISO);
   const total = years * 52;
   const currentIndex = Math.min(livedWeeks, total - 1);
@@ -29,58 +25,70 @@ export default function LifeGrid({ birthDateISO, years = 80, compact = false }: 
     visible: { opacity: 1, y: 0 },
   };
 
-  // helper para rango de fechas por semana
-  function getWeekRange(startISO: string, weekIndex: number): string {
-    const start = new Date(startISO);
-    start.setDate(start.getDate() + weekIndex * 7);
-    const end = new Date(start);
-    end.setDate(start.getDate() + 6);
-    const fmt = (d: Date) => d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
-    return `${fmt(start)} – ${fmt(end)}`;
-  }
-
   return (
     <motion.section
-      className={`${styles.wrapper} ${compact ? styles.compact : ""}`}
+      className={styles.wrapper}
       variants={variants}
       initial="hidden"
       animate="visible"
       transition={{ duration: 0.45 }}
     >
       <div className={styles.scroller}>
-        <div className={styles.headerRow}>
-          <div className={`${styles.yearLabel} ${styles.headerLabel}`} aria-hidden />
-          <WeekHeader />
+        {/* Cabecera de semanas (1..52) */}
+        <div className={styles.weekHeader} aria-hidden="true">
+          {Array.from({ length: 52 }, (_, i) => {
+            const n = i + 1;
+            const major = n % 5 === 0;
+            return (
+              <span
+                key={n}
+                className={major ? styles.weekMajor : styles.weekMinor}
+              >
+                {n}
+              </span>
+            );
+          })}
         </div>
 
-        {rows.map((year) => (
-          <div key={year} className={styles.row}>
-            <YearLabel value={year} />
-            <div className={styles.weeks}>
-              {cols.map((w) => {
-                const k = year * 52 + w;
-                let state: "past" | "current" | "future" = "future";
-                if (k < livedWeeks) state = "past";
-                else if (k === currentIndex) state = "current";
+        {/* Filas por año */}
+        {rows.map((year) => {
+          const showYear = year % 5 === 0; // solo múltiplos de 5
+          return (
+            <div key={year} className={styles.row}>
+              <div
+                className={styles.yearLabel}
+                aria-hidden={!showYear ? "true" : undefined}
+                style={!showYear ? { color: "transparent" } : undefined}
+              >
+                {showYear ? year : year /* mantiene layout; color transparente */}
+              </div>
 
-                const isCurrent = state === "current";
-                const label = `Year ${year}, week ${w + 1}. ${getWeekRange(birthDateISO, k)}`;
+              <div className={styles.weeks}>
+                {cols.map((w) => {
+                  const k = year * 52 + w;
+                  let state: "past" | "current" | "future" = "future";
+                  if (k < livedWeeks) state = "past";
+                  else if (k === currentIndex) state = "current";
 
-                return (
-                  <WeekCell
-                    key={w}
-                    state={state}
-                    title={label}
-                    aria-label={label}
-                    ref={isCurrent ? currentRef : undefined}
-                    data-current={isCurrent ? "true" : undefined}
-                    tabIndex={isCurrent ? 0 : -1}
-                  />
-                );
-              })}
+                  const label = `Year ${year}, week ${w + 1}`;
+                  const isCurrent = state === "current";
+
+                  return (
+                    <WeekCell
+                      key={w}
+                      state={state}
+                      title={label}
+                      aria-label={label}
+                      ref={isCurrent ? currentRef : undefined}
+                      data-current={isCurrent ? "true" : undefined}
+                      tabIndex={isCurrent ? 0 : -1}
+                    />
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </motion.section>
   );
