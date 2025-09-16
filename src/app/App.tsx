@@ -7,9 +7,9 @@ import OnboardingModal from "../components/OnboardingModal/OnboardingModal";
 import LifeGridSVG from "../components/LifeGridSVG/LifeGridSVG";
 import Legend from "../components/Legend";
 import SummaryBar from "../components/SummaryBar";
-import ThemeToggle from "../components/ThemeToggle";
 import JumpToCurrent from "../components/JumpToCurrent";
 import InstallPrompt from "../components/InstallPrompt";
+import SettingsPanel from "../components/Settings/SettingsPanel";
 
 import styles from "./App.module.css";
 
@@ -25,8 +25,8 @@ export default function App() {
 
   return (
     <div className={styles.app}>
-      {/* Botón de tema fijo (esquina superior derecha) */}
-      <ThemeToggle />
+      {/* Botón/Panel de Settings (incluye cambio de tema y reset) */}
+      <SettingsPanel />
 
       {!dobISO ? (
         <OnboardingModal
@@ -56,28 +56,6 @@ export default function App() {
 
           {/* Prompt PWA primera vez (instalar app) */}
           <InstallPrompt />
-
-          <footer className={styles.footer}>
-            <small>
-              <a
-                href="#reset"
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (
-                    window.confirm(
-                      "Are you sure you want to clear your saved data?"
-                    )
-                  ) {
-                    localStorage.removeItem("lifeweeks.v1");
-                    window.location.reload();
-                  }
-                }}
-                style={{ opacity: 0.5 }}
-              >
-                Reset (hidden)
-              </a>
-            </small>
-          </footer>
         </>
       )}
     </div>
