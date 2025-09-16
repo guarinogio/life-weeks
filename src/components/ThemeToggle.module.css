@@ -1,5 +1,5 @@
 .btn {
-  position: fixed;     /* se mantiene fijo en pantalla */
+  position: fixed;     /* fijo en pantalla */
   top: 16px;
   right: 16px;
   z-index: 1000;
@@ -20,13 +20,8 @@
   transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
 }
 
-.btn:hover {
-  transform: scale(1.05);
-}
-
-.btn:active {
-  transform: scale(0.95);
-}
+.btn:hover { transform: scale(1.05); }
+.btn:active { transform: scale(0.95); }
 
 .btn:focus-visible {
   outline: 2px solid var(--c-accent);
@@ -34,7 +29,5 @@
 }
 
 @media print {
-  .btn {
-    display: none;
-  }
+  .btn { display: none; }
 }

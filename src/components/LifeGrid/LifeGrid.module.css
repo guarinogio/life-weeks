@@ -9,7 +9,8 @@
 /* Agrupa cabecera + filas (esta capa scrollea en móvil) */
 .scroller {}
 
-/* Dos columnas: etiqueta de año + contenido */
+/* Dos columnas: etiqueta de año + contenido
+   -> SIN column-gap; separación con padding-right en label. */
 .headerRow,
 .row {
   display: grid;
@@ -17,16 +18,18 @@
   align-items: center;
 }
 
-/* ---- Cabecera de semanas ---- */
+/* ---- Cabecera de semanas ----
+   ¡Mismas 52 columnas y mismo gap que .weeks! */
 .weekHeader {
   display: grid;
   grid-template-columns: repeat(52, 1fr);
   gap: var(--cell-gap);
   color: var(--c-text-muted);
-  font-size: 12px; /* tamaño normal en desktop */
+  font-size: 12px;
   font-variant-numeric: tabular-nums;
+  line-height: 1;
   margin: 0;
-  justify-items: center; /* centra cada número en su columna */
+  justify-items: center;
 }
 .weekHeader > span {
   display: inline-flex;
@@ -35,8 +38,8 @@
   width: 100%;
 }
 
-/* En escritorio: mostrar solo los múltiplos de 5 */
-.weekMinor { visibility: hidden; }  /* << por defecto ocultos */
+/* Desktop: solo múltiplos de 5 visibles (manteniendo ancho) */
+.weekMinor { visibility: hidden; }
 .weekMajor { visibility: visible; font-weight: 500; }
 
 /* ---- Etiqueta de año (y celda vacía de cabecera) ---- */
@@ -76,15 +79,11 @@
     position: relative;
   }
 
+  /* Mismas columnas y gap, pero columnas de ancho fijo */
   .weekHeader {
-    grid-template-columns: repeat(52, var(--cell-d)); /* columnas fijas */
-    font-size: 10px; /* más chico en móvil */
-    letter-spacing: 0.2px;
-  }
-  .yearLabel {
+    grid-template-columns: repeat(52, var(--cell-d));
     font-size: 10px;
   }
-
   .row {
     grid-template-columns: var(--label-w)
       calc(52 * var(--cell-d) + 51 * var(--cell-gap));
@@ -116,7 +115,7 @@
   .weeks { gap: 1px; }
   .row { margin-block: 4px; }
 
-  /* En móvil: mantener ocultos los menores (evita “amontonamiento”) */
+  /* También en móvil ocultamos los intermedios pero mantienen ancho */
   .weekMinor { visibility: hidden; }
   .weekMajor { visibility: visible; }
 }
