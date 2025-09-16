@@ -13,11 +13,9 @@
   /* 1 columna para label + 52 columnas del tamaño del punto */
   grid-template-columns: var(--label-w) repeat(52, var(--cell-d));
   column-gap: var(--cell-gap);
-  width: max-content;          /* <- ancho sólo lo que necesita */
-  margin-inline: auto;         /* <- centrado horizontal */
-
-  /* Evita desplazamientos subpíxel a diferentes zooms */
-  contain: layout paint;       /* fuerza al navegador a mantener cálculos consistentes */
+  width: max-content;          /* <- solo lo necesario */
+  margin-inline: auto;         /* <- centrado */
+  contain: layout paint;
   box-sizing: border-box;
 }
 
@@ -32,14 +30,14 @@
   font-variant-numeric: tabular-nums;
   line-height: 1;
   margin: 0;
-  justify-items: center;              /* centra cada número en su celda */
+  justify-items: center;
   box-sizing: border-box;
 }
 .weekHeader > span {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 100%;                        /* asegura mismo ancho que la celda */
+  width: 100%;
 }
 
 .weekMinor { visibility: visible; opacity: 0.85; }
@@ -74,33 +72,37 @@
   box-sizing: border-box;
 }
 
-/* ====== Mobile: scroll horizontal + sticky + compact ===================== */
+/* ====== Mobile: scroll horizontal SOLO dentro del calendario ============= */
 @media (max-width: 600px) {
-  :root {
-    --label-w: 28px;                   /* label más angosto en mobile */
-  }
+  :root { --label-w: 28px; }
 
   .scroller {
-    overflow-x: auto;                  /* scroll H */
+    /* El contenedor pasa a medir como el viewport */
+    width: 100%;
+    max-width: 100%;
+    margin-inline: 0;
+
+    /* Y el scroll horizontal ocurre aquí, no en el body */
+    overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
-    scroll-padding-left: var(--label-w); /* al hacer “jump”, no quede bajo el label sticky */
-    /* seguimos usando el mismo template (ya es con var(--cell-d)) */
+
+    /* mantenemos el mismo template de columnas */
+    grid-template-columns: var(--label-w) repeat(52, var(--cell-d));
   }
 
   .weekHeader {
-    position: sticky;                  /* sticky arriba */
+    position: sticky;
     top: 0;
     z-index: 7;
     background: var(--c-bg);
     box-shadow: 0 1px 0 var(--c-grid);
     font-size: 10px;
-    /* evita micro-desplazamientos por fuentes/zoom */
-    transform: translateZ(0);
+    transform: translateZ(0); /* evita micro-shifts durante el scroll */
   }
 
   .yearLabel {
-    position: sticky;                  /* sticky izquierda */
+    position: sticky;
     left: 0;
     z-index: 6;
     box-shadow: 1px 0 0 var(--c-grid);
@@ -112,7 +114,6 @@
 
   .weeks { row-gap: 1px; margin-block: 4px; }
 
-  /* En móvil mostramos TODOS los números también */
   .weekMinor { visibility: visible; opacity: 0.85; }
   .weekMajor { visibility: visible; }
 }
