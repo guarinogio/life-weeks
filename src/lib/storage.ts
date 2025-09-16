@@ -45,7 +45,7 @@ function saveSettings(next: Partial<Settings>) {
     expectancy:
       typeof next.expectancy === "number"
         ? next.expectancy
-        : current?.expectancy ?? 80,
+        : (current?.expectancy ?? 80),
     locked: true,
   };
   localStorage.setItem(KEY, JSON.stringify(merged));

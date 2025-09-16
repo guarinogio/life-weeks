@@ -10,7 +10,8 @@ function utcDate(y: number, m: number, d: number): Date {
 
 /** Valida componentes de fecha (en rangos básicos y fecha real del calendario). */
 function isValidDateParts(d: number, m: number, y: number): boolean {
-  if (!Number.isInteger(d) || !Number.isInteger(m) || !Number.isInteger(y)) return false;
+  if (!Number.isInteger(d) || !Number.isInteger(m) || !Number.isInteger(y))
+    return false;
   if (y < 1900 || y > 9999) return false;
   if (m < 1 || m > 12) return false;
   if (d < 1 || d > 31) return false;
@@ -29,7 +30,7 @@ function isValidDateParts(d: number, m: number, y: number): boolean {
 export function parseDMYToISO(
   day: string,
   month: string,
-  year: string
+  year: string,
 ): string | null {
   const d = Number(day);
   const m = Number(month);
@@ -77,11 +78,14 @@ export function ageBreakdown(birthDateISO: string) {
  * Algoritmo: mover al jueves de su semana y contar desde el 1 de enero ISO.
  */
 export function isoWeek(date: Date): number {
-  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const d = new Date(
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()),
+  );
   const day = d.getUTCDay() || 7; // 1..7 (lunes=1)
   d.setUTCDate(d.getUTCDate() + 4 - day); // ir al jueves de la misma semana
   const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-  const diffDays = Math.floor((d.getTime() - yearStart.getTime()) / 86400000) + 1;
+  const diffDays =
+    Math.floor((d.getTime() - yearStart.getTime()) / 86400000) + 1;
   return Math.ceil(diffDays / 7);
 }
 

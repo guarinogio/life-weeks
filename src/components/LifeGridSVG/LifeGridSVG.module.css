@@ -12,42 +12,73 @@
 }
 
 /* ====== Dots / estados ====== */
-.dotPast   { fill: var(--c-past);    stroke: var(--c-past); }
-.dotFuture { fill: transparent;      stroke: var(--c-future); }
+.dotPast {
+  fill: var(--c-past);
+  stroke: var(--c-past);
+}
+.dotFuture {
+  fill: transparent;
+  stroke: var(--c-future);
+}
 
 /* Punto actual: solo parpadeo de opacidad (sin mover/escala) */
-.dotCurrent{
+.dotCurrent {
   fill: var(--c-current);
   stroke: var(--c-current);
   animation: blink 1.5s ease-in-out infinite;
 }
 
 @keyframes blink {
-  0%, 100% { opacity: 1; }
-  50%      { opacity: 0.55; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .dotCurrent { animation: none; }
+  .dotCurrent {
+    animation: none;
+  }
 }
 
 /* ====== Labels ====== */
 .weekNumber,
 .yearLabel {
   fill: var(--c-text-muted);
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell,
-    "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji",
+  font-family:
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    Ubuntu,
+    Cantarell,
+    "Helvetica Neue",
+    Arial,
+    "Noto Sans",
+    "Apple Color Emoji",
+    "Segoe UI Emoji",
     "Segoe UI Symbol";
   font-variant-numeric: tabular-nums;
   font-size: 11px;
 }
-.weekMajor { font-weight: 600; }
-.weekMinor { opacity: 0.85; }
+.weekMajor {
+  font-weight: 600;
+}
+.weekMinor {
+  opacity: 0.85;
+}
 
 /* Mobile: mantener números visibles pero más pequeños */
 @media (max-width: 600px) {
-  .weekNumber { font-size: 9px; }
-  .yearLabel  { font-size: 10px; }
+  .weekNumber {
+    font-size: 9px;
+  }
+  .yearLabel {
+    font-size: 10px;
+  }
 }
 
 /* ====== Tooltip flotante ====== */
@@ -62,7 +93,7 @@
   border-radius: 10px;
   padding: 6px 10px;
   font-size: 12px;
-  box-shadow: 0 6px 24px rgba(0,0,0,.18);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
   pointer-events: auto;
   max-width: min(80vw, 320px);
 }
@@ -70,10 +101,14 @@
 /* ====== A11y: visually hidden ====== */
 .srOnly {
   position: absolute !important;
-  width: 1px; height: 1px;
-  padding: 0; margin: -1px;
-  overflow: hidden; clip: rect(0, 0, 0, 0);
-  white-space: nowrap; border: 0;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* Foco accesible (SVG) */

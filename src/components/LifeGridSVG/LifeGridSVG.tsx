@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import styles from "./LifeGridSVG.module.css";
+import { useEffect, useMemo, useRef, useState } from "react";
+
 import { weeksBetween } from "../../lib/date";
+import styles from "./LifeGridSVG.module.css";
 
 type Props = {
   birthDateISO: string;
@@ -59,7 +60,7 @@ export default function LifeGridSVG({ birthDateISO, years = 80 }: Props) {
   // ---- Tooltips (touch/keyboard) ----
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [tip, setTip] = useState<{ x: number; y: number; text: string } | null>(
-    null
+    null,
   );
   const hideTip = () => setTip(null);
 
@@ -95,7 +96,7 @@ export default function LifeGridSVG({ birthDateISO, years = 80 }: Props) {
 
   const focusIndex = (idx: number) => {
     const el = svgRef.current?.querySelector<SVGCircleElement>(
-      `circle[data-idx="${idx}"]`
+      `circle[data-idx="${idx}"]`,
     );
     if (el) {
       el.focus();
@@ -146,7 +147,7 @@ export default function LifeGridSVG({ birthDateISO, years = 80 }: Props) {
 
   const showTooltipForIndex = (idx: number) => {
     const el = svgRef.current?.querySelector<SVGCircleElement>(
-      `circle[data-idx="${idx}"]`
+      `circle[data-idx="${idx}"]`,
     );
     if (!el) return;
     const rect = el.getBoundingClientRect();
@@ -231,8 +232,8 @@ export default function LifeGridSVG({ birthDateISO, years = 80 }: Props) {
             state === "current"
               ? styles.dotCurrent
               : state === "past"
-              ? styles.dotPast
-              : styles.dotFuture;
+                ? styles.dotPast
+                : styles.dotFuture;
 
           return (
             <circle

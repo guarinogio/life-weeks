@@ -1,8 +1,9 @@
-import { useRef } from "react";
-import { weeksBetween } from "../../lib/date";
-import WeekCell from "./WeekCell";
-import styles from "./LifeGrid.module.css";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
+import { useRef } from "react";
+
+import { weeksBetween } from "../../lib/date";
+import styles from "./LifeGrid.module.css";
+import WeekCell from "./WeekCell";
 
 interface Props {
   birthDateISO: string;
@@ -60,7 +61,11 @@ export default function LifeGrid({ birthDateISO, years = 80 }: Props) {
                 aria-hidden={!showYear ? "true" : undefined}
                 style={!showYear ? { color: "transparent" } : undefined}
               >
-                {showYear ? year : year /* mantiene layout; color transparente */}
+                {
+                  showYear
+                    ? year
+                    : year /* mantiene layout; color transparente */
+                }
               </div>
 
               <div className={styles.weeks}>

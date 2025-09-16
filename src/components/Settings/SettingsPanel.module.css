@@ -16,14 +16,31 @@
   color: var(--c-text);
   cursor: pointer;
 
-  box-shadow: 0 2px 6px rgba(0,0,0,.12), 0 6px 16px rgba(0,0,0,.10);
-  transition: transform .15s ease, background-color .2s ease, color .2s ease, border-color .2s ease;
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.12),
+    0 6px 16px rgba(0, 0, 0, 0.1);
+  transition:
+    transform 0.15s ease,
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
 }
-.gearBtn:hover { transform: translateY(-1px); }
-.gearBtn:active { transform: translateY(0); }
-.gearBtn:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }
+.gearBtn:hover {
+  transform: translateY(-1px);
+}
+.gearBtn:active {
+  transform: translateY(0);
+}
+.gearBtn:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 2px;
+}
 
-@media print { .gearBtn { display: none; } }
+@media print {
+  .gearBtn {
+    display: none;
+  }
+}
 
 /* Overlay root */
 .backdrop {
@@ -46,24 +63,32 @@
 /* Drawer encima del scrim */
 .drawer {
   position: absolute;
-  top: 0; right: 0; bottom: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
   z-index: 1; /* superior al scrim */
   width: min(420px, 92vw);
   background: var(--c-bg);
   color: var(--c-text);
   border-left: 1px solid var(--c-border);
-  box-shadow: -10px 0 30px rgba(0,0,0,.25);
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.25);
   padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 16px;
 
-  animation: slideIn .18s ease-out both;
+  animation: slideIn 0.18s ease-out both;
 }
 
 @keyframes slideIn {
-  from { transform: translateX(8px); opacity: .98; }
-  to   { transform: translateX(0);   opacity: 1; }
+  from {
+    transform: translateX(8px);
+    opacity: 0.98;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 .header {

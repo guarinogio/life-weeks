@@ -1,13 +1,13 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import App from "./app/App";
-import ErrorBoundary from "./components/ErrorBoundary";
-
 import "./styles/reset.css";
 import "./styles/tokens.css";
 import "./styles/globals.css";
 import "./styles/print.css";
 
+import React from "react";
+import ReactDOM from "react-dom/client";
+
+import App from "./app/App";
+import ErrorBoundary from "./components/ErrorBoundary";
 import { setupPWA } from "./pwa";
 
 /**
@@ -39,7 +39,7 @@ import { setupPWA } from "./pwa";
       if (stillNoChoice) {
         document.documentElement.setAttribute(
           "data-theme",
-          mql.matches ? "dark" : "light"
+          mql.matches ? "dark" : "light",
         );
       }
     };
@@ -58,5 +58,5 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <ErrorBoundary>
       <App />
     </ErrorBoundary>
-  </React.StrictMode>
+  </React.StrictMode>,
 );

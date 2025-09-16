@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
-import styles from "./OnboardingModal.module.css";
+
 import { parseDMYToISO } from "../../lib/date";
+import styles from "./OnboardingModal.module.css";
 
 type Props = {
   onConfirmed: (iso: string) => void;
@@ -61,7 +62,7 @@ export default function OnboardingModal({ onConfirmed }: Props) {
       return;
     }
 
-    // Guardar en localStorage (formato compacto usado por la app)
+    // Guardar en localStorage
     try {
       const payload = { dob: iso, expectancy: Number(expectancy) };
       localStorage.setItem("lifeweeks.v1", JSON.stringify(payload));
@@ -77,8 +78,8 @@ export default function OnboardingModal({ onConfirmed }: Props) {
       <form className={styles.modal} onSubmit={onSubmit}>
         <h2 className={styles.title}>Set up your life calendar</h2>
         <p className={styles.desc}>
-          Enter your date of birth and (optional) life expectancy. You can change
-          the expectancy later in Settings.
+          Enter your date of birth and (optional) life expectancy. You can
+          change the expectancy later in Settings.
         </p>
 
         <div className={styles.fieldGroup} aria-label="Date of birth">

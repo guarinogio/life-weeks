@@ -36,13 +36,16 @@ export function setupPWA() {
       });
 
       // 3) chequeo periódico (cada 30 minutos)
-      const interval = window.setInterval(() => {
-        try {
-          reg.update();
-        } catch {
-          /* noop */
-        }
-      }, 30 * 60 * 1000);
+      const interval = window.setInterval(
+        () => {
+          try {
+            reg.update();
+          } catch {
+            /* noop */
+          }
+        },
+        30 * 60 * 1000,
+      );
 
       // limpiar si la página se descarga
       window.addEventListener("beforeunload", () => clearInterval(interval));

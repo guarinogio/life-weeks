@@ -1,25 +1,30 @@
 import styles from "./JumpToCurrent.module.css";
 
+type Focusable = HTMLElement | SVGElement;
+
 export default function JumpToCurrent() {
   const onClick = () => {
-    const current =
-      (document.getElementById("current-week-dot") as
-        | (HTMLElement & { scrollIntoView: (opts?: any) => void })
-        | (SVGElement & { scrollIntoView: (opts?: any) => void })
-        | null);
+    const current = document.getElementById(
+      "current-week-dot",
+    ) as Focusable | null;
 
-    if (current?.scrollIntoView) {
+    if (current) {
       current.scrollIntoView({
         behavior: "smooth",
         block: "center",
         inline: "center",
       });
-      (current as any).focus?.({ preventScroll: true });
+      // ambos (HTMLElement/SVGElement) tienen focus() tipado en lib.dom.d.ts
+      current.focus?.({ preventScroll: true });
       return;
     }
 
-    const svg = document.getElementById("life-grid-svg");
-    svg?.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+    const svg = document.getElementById("life-grid-svg") as HTMLElement | null;
+    svg?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+      inline: "nearest",
+    });
   };
 
   return (

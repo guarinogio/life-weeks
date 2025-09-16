@@ -1,16 +1,15 @@
 import { useMemo, useState } from "react";
-import { getDOB, getExpectancy } from "../lib/storage";
-import { computeStats } from "../lib/stats";
-import { ageBreakdown } from "../lib/date";
 
-import OnboardingModal from "../components/OnboardingModal/OnboardingModal";
-import LifeGridSVG from "../components/LifeGridSVG/LifeGridSVG";
-import Legend from "../components/Legend";
-import SummaryBar from "../components/SummaryBar";
-import JumpToCurrent from "../components/JumpToCurrent";
 import InstallPrompt from "../components/InstallPrompt";
+import JumpToCurrent from "../components/JumpToCurrent";
+import Legend from "../components/Legend";
+import LifeGridSVG from "../components/LifeGridSVG/LifeGridSVG";
+import OnboardingModal from "../components/OnboardingModal/OnboardingModal";
 import SettingsPanel from "../components/Settings/SettingsPanel";
-
+import SummaryBar from "../components/SummaryBar";
+import { ageBreakdown } from "../lib/date";
+import { computeStats } from "../lib/stats";
+import { getDOB, getExpectancy } from "../lib/storage";
 import styles from "./App.module.css";
 
 export default function App() {
@@ -19,7 +18,7 @@ export default function App() {
 
   const stats = useMemo(
     () => (dobISO ? computeStats(dobISO, expectancy) : null),
-    [dobISO, expectancy]
+    [dobISO, expectancy],
   );
   const age = useMemo(() => (dobISO ? ageBreakdown(dobISO) : null), [dobISO]);
 

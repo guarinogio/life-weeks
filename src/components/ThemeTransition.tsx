@@ -1,7 +1,11 @@
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useEffect, useState } from "react";
 
-export default function ThemeTransition({ theme }: { theme: "light" | "dark" }) {
+export default function ThemeTransition({
+  theme,
+}: {
+  theme: "light" | "dark";
+}) {
   const [prevTheme, setPrevTheme] = useState(theme);
   const reduced = useReducedMotion();
 

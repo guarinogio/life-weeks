@@ -1,31 +1,35 @@
-import styles from "./SummaryBar.module.css";
 import { isoWeek, isoWeeksInYear } from "../lib/date";
+import styles from "./SummaryBar.module.css";
+
+type StatsLike = Partial<{
+  lived: number;
+  weeksLived: number;
+  livedWeeks: number;
+  total: number;
+  totalWeeks: number;
+  remaining: number;
+  weeksRemaining: number;
+}>;
 
 type Props = {
-  // acepta cualquier forma; lo normal es que contenga semanas vividas/total
-  stats: Record<string, unknown>;
+  stats: StatsLike;
   age: { years: number; months: number; days: number };
 };
 
+function num(v: unknown): number | undefined {
+  return typeof v === "number" && Number.isFinite(v) ? v : undefined;
+}
+
 export default function SummaryBar({ stats, age }: Props) {
-  // Extrae de forma segura desde stats posibles claves conocidas
-  const livedRaw =
-    (stats as any).lived ??
-    (stats as any).weeksLived ??
-    (stats as any).livedWeeks ??
-    0;
+  const lived =
+    num(stats.lived) ?? num(stats.weeksLived) ?? num(stats.livedWeeks) ?? 0;
 
-  const totalRaw =
-    (stats as any).total ??
-    (stats as any).totalWeeks ??
-    ((stats as any).lived ?? (stats as any).weeksLived ?? (stats as any).livedWeeks ?? 0) +
-      ((stats as any).remaining ?? (stats as any).weeksRemaining ?? 0);
+  const totalDirect = num(stats.total) ?? num(stats.totalWeeks);
+  const remaining = num(stats.remaining) ?? num(stats.weeksRemaining);
 
-  const lived = Number.isFinite(livedRaw) ? Number(livedRaw) : 0;
-  const total = Number.isFinite(totalRaw) && totalRaw > 0 ? Number(totalRaw) : Math.max(1, lived);
+  const total = totalDirect ?? (lived + (remaining ?? 0) || Math.max(1, lived)); // fallback seguro ≥ 1
 
   const pct = Math.round((lived / total) * 1000) / 10;
-  const remaining = Math.max(0, total - lived);
 
   // Semana ISO actual y semanas totales del año en curso
   const now = new Date();
@@ -35,7 +39,7 @@ export default function SummaryBar({ stats, age }: Props) {
 
   const livedFmt = lived.toLocaleString();
   const totalFmt = total.toLocaleString();
-  const remainingFmt = remaining.toLocaleString();
+  const remainingFmt = (total - lived).toLocaleString();
 
   return (
     <section className={styles.bar}>
@@ -51,8 +55,8 @@ export default function SummaryBar({ stats, age }: Props) {
       </p>
       <p className={styles.sub}>
         <span className={styles.yearLabel}>This year:</span> week{" "}
-        <strong>{weekNow}</strong> of <strong>{weeksInThisYear}</strong>. Remaining:{" "}
-        <strong>{remainingYear}</strong>.
+        <strong>{weekNow}</strong> of <strong>{weeksInThisYear}</strong>.
+        Remaining: <strong>{remainingYear}</strong>.
       </p>
     </section>
   );

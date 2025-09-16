@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+
 import styles from "./InstallPrompt.module.css";
 
 const DISMISS_KEY = "lifeweeks.pwaDismissed";
@@ -10,7 +11,11 @@ interface BeforeInstallPromptEvent extends Event {
 
 function isInStandalone(): boolean {
   // Chrome/Edge
-  if (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) return true;
+  if (
+    window.matchMedia &&
+    window.matchMedia("(display-mode: standalone)").matches
+  )
+    return true;
   // iOS Safari
   // @ts-expect-error non-standard
   if (window.navigator.standalone) return true;
@@ -18,9 +23,14 @@ function isInStandalone(): boolean {
 }
 
 export default function InstallPrompt() {
-  const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(null);
+  const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(
+    null,
+  );
   const [open, setOpen] = useState(false);
-  const dismissed = useMemo(() => localStorage.getItem(DISMISS_KEY) === "1", []);
+  const dismissed = useMemo(
+    () => localStorage.getItem(DISMISS_KEY) === "1",
+    [],
+  );
   const installed = useMemo(() => isInStandalone(), []);
 
   useEffect(() => {
@@ -69,14 +79,20 @@ export default function InstallPrompt() {
   }
 
   return (
-    <div className={styles.backdrop} role="dialog" aria-modal="true" aria-labelledby="pwa-title">
+    <div
+      className={styles.backdrop}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="pwa-title"
+    >
       <div className={styles.modal}>
         <div className={styles.header}>
           <img src={iconSrc} alt="" className={styles.icon} />
           <h3 id="pwa-title">Install Life Weeks?</h3>
         </div>
         <p className={styles.body}>
-          Install this app on your device for a faster, full-screen experience and offline access.
+          Install this app on your device for a faster, full-screen experience
+          and offline access.
         </p>
         <div className={styles.actions}>
           <button className={styles.secondary} onClick={onCancel} autoFocus>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import styles from "./SettingsPanel.module.css";
 
 const THEME_KEY = "lifeweeks.theme"; // 'light' | 'dark'
@@ -20,7 +21,7 @@ export default function SettingsPanel() {
 
   function onReset() {
     const ok = window.confirm(
-      "This will clear your saved data (birth date and life expectancy) and reload the app. Continue?"
+      "This will clear your saved data (birth date and life expectancy) and reload the app. Continue?",
     );
     if (!ok) return;
     localStorage.removeItem("lifeweeks.v1");

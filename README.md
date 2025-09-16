@@ -48,8 +48,9 @@ Open `http://localhost:5173`.
 On first load you'll see the **DOB modal** (`dd/mm/yyyy`). After confirming, the **80×52** grid renders with the **current week** highlighted.
 
 > **Tip — Reset DOB:** Use the “Reset (hidden)” link at the footer, or run in DevTools:
+>
 > ```js
-> localStorage.removeItem('lifeweeks.v1');
+> localStorage.removeItem("lifeweeks.v1");
 > ```
 
 ---

@@ -17,7 +17,7 @@
   /* spacing & sizes */
   --cell-gap: clamp(2px, 0.45vw, 8px);
   --label-w: clamp(22px, 2.2vw, 32px);
-  --label-gap: 8px;      /* ← separación entre números de año y la grilla */
+  --label-gap: 8px; /* ← separación entre números de año y la grilla */
 
   /* tamaño fijo de celda usado en móvil con scroll horizontal */
   --cell-d: 14px;
@@ -42,7 +42,7 @@
   :root {
     --cell-gap: 2px;
     --label-w: 18px;
-    --label-gap: 6px;   /* un poco más compacto en teléfonos pequeños */
+    --label-gap: 6px; /* un poco más compacto en teléfonos pequeños */
     --cell-d: 12px;
   }
 }
