@@ -8,7 +8,7 @@ import Legend from "../components/Legend";
 import SummaryBar from "../components/SummaryBar";
 import ThemeToggle from "../components/ThemeToggle";
 import JumpToCurrent from "../components/JumpToCurrent";
-import InstallButton from "../components/InstallButton";   // ⬅️ nuevo
+import InstallPrompt from "../components/InstallPrompt";  // ⬅️ nuevo
 import styles from "./App.module.css";
 
 export default function App() {
@@ -44,7 +44,7 @@ export default function App() {
           <Legend expectancy={expectancy} />
 
           <JumpToCurrent />
-          <InstallButton />   {/* ⬅️ aquí */}
+          <InstallPrompt /> {/* ⬅️ modal PWA */}
 
           <footer className={styles.footer}>
             <small>
@@ -59,7 +59,7 @@ export default function App() {
                 }}
                 style={{ opacity: 0.5 }}
               >
-                Reset
+                Reset (hidden)
               </a>
             </small>
           </footer>

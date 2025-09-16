@@ -23,7 +23,7 @@
   grid-template-columns: repeat(52, 1fr);
   gap: var(--cell-gap);
   color: var(--c-text-muted);
-  font-size: 11px;
+  font-size: 12px; /* tamaño normal en desktop */
   font-variant-numeric: tabular-nums;
   margin: 0;
   justify-items: center; /* centra cada número en su columna */
@@ -34,13 +34,10 @@
   justify-content: center;
   width: 100%;
 }
-.weekMinor { opacity: 0.6; }
-.weekMajor { opacity: 1; font-weight: 500; }
 
-/* Mantiene espacio en móviles para no amontonar */
-@media (max-width: 700px) {
-  .weekMinor { visibility: hidden; }
-}
+/* En escritorio: mostrar solo los múltiplos de 5 */
+.weekMinor { visibility: hidden; }  /* << por defecto ocultos */
+.weekMajor { visibility: visible; font-weight: 500; }
 
 /* ---- Etiqueta de año (y celda vacía de cabecera) ---- */
 .yearLabel {
@@ -79,14 +76,13 @@
     position: relative;
   }
 
-  /* tamaño de números más chico y centrado */
   .weekHeader {
-    grid-template-columns: repeat(52, var(--cell-d));
-    font-size: 10px;             /* ↓↓↓ */
+    grid-template-columns: repeat(52, var(--cell-d)); /* columnas fijas */
+    font-size: 10px; /* más chico en móvil */
     letter-spacing: 0.2px;
   }
   .yearLabel {
-    font-size: 10px;             /* ↓↓↓ */
+    font-size: 10px;
   }
 
   .row {
@@ -119,9 +115,13 @@
   /* Compact automático */
   .weeks { gap: 1px; }
   .row { margin-block: 4px; }
+
+  /* En móvil: mantener ocultos los menores (evita “amontonamiento”) */
+  .weekMinor { visibility: hidden; }
+  .weekMajor { visibility: visible; }
 }
 
-/* Compact manual (para forzar en desktop si querés) */
+/* Compact manual (por si querés forzarlo en desktop) */
 .compact .weeks { gap: 1px; }
 .compact .row { margin-block: 4px; }
 
