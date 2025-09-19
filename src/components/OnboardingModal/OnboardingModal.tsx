@@ -1,148 +1,125 @@
-import { useRef, useState } from "react";
+import type { FormEvent } from "react";
+import { useMemo, useState } from "react";
 
-import { parseDMYToISO } from "../../lib/date";
+import { ageBreakdown } from "../../lib/date";
+import { setDOB, setExpectancy } from "../../lib/storage";
 import styles from "./OnboardingModal.module.css";
 
 type Props = {
-  onConfirmed: (iso: string) => void;
+  onConfirmed: (dobISO: string) => void;
 };
 
+const TODAY_ISO = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+const MIN_ISO = "1900-01-01";
+
 export default function OnboardingModal({ onConfirmed }: Props) {
-  const [day, setDay] = useState("");
-  const [month, setMonth] = useState("");
-  const [year, setYear] = useState("");
-  const [expectancy, setExpectancy] = useState<number>(80);
+  const [dateISO, setDateISO] = useState<string>("");
+  const [expectancy, setExp] = useState<number>(80);
   const [error, setError] = useState<string | null>(null);
 
-  const dayRef = useRef<HTMLInputElement>(null);
-  const monthRef = useRef<HTMLInputElement>(null);
-  const yearRef = useRef<HTMLInputElement>(null);
+  const ageText = useMemo(() => {
+    if (!dateISO) return "";
+    try {
+      const a = ageBreakdown(dateISO);
+      return `${a.years}y ${a.months}m ${a.days}d`;
+    } catch {
+      return "";
+    }
+  }, [dateISO]);
 
-  function clampDigits(v: string, maxLen: number) {
-    return v.replace(/\D/g, "").slice(0, maxLen);
+  function validate(): string | null {
+    if (!dateISO) return "Please pick your date of birth.";
+    const dob = new Date(dateISO);
+    if (Number.isNaN(dob.getTime())) return "Invalid date.";
+
+    const today = new Date();
+    if (dob > today) return "Date of birth cannot be in the future.";
+
+    const years = ageBreakdown(dateISO).years;
+    if (years > 110) return "Age must be 110 or less.";
+
+    if (!Number.isFinite(expectancy))
+      return "Life expectancy must be a number.";
+    if (expectancy < 60 || expectancy > 110) {
+      return "Life expectancy must be between 60 and 110 years.";
+    }
+    if (years >= expectancy) {
+      return `Your age (${years}) exceeds or equals the selected life expectancy (${expectancy}). Increase it.`;
+    }
+    return null;
   }
 
-  const onDayChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const v = clampDigits(e.target.value, 2);
-    setDay(v);
-    if (v.length === 2) {
-      monthRef.current?.focus();
-      monthRef.current?.select();
-    }
-  };
-
-  const onMonthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const v = clampDigits(e.target.value, 2);
-    setMonth(v);
-    if (v.length === 2) {
-      yearRef.current?.focus();
-      yearRef.current?.select();
-    }
-  };
-
-  const onYearChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const v = clampDigits(e.target.value, 4);
-    setYear(v);
-  };
-
-  const onSubmit = (e: React.FormEvent) => {
+  function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    const err = validate();
+    if (err) {
+      setError(err);
+      return;
+    }
     setError(null);
 
-    // Validar expectativa (60–110)
-    if (!Number.isFinite(expectancy) || expectancy < 60 || expectancy > 110) {
-      setError("Life expectancy must be between 60 and 110 years.");
-      return;
-    }
-
-    // Validar fecha D/M/Y → ISO
-    const iso = parseDMYToISO(day, month, year);
-    if (!iso) {
-      setError("Please enter a valid date (DD / MM / YYYY).");
-      return;
-    }
-
-    // Guardar en localStorage
-    try {
-      const payload = { dob: iso, expectancy: Number(expectancy) };
-      localStorage.setItem("lifeweeks.v1", JSON.stringify(payload));
-    } catch {
-      /* noop */
-    }
-
-    onConfirmed(iso);
-  };
+    setDOB(dateISO);
+    setExpectancy(expectancy);
+    onConfirmed(dateISO);
+  }
 
   return (
     <div className={styles.backdrop} role="dialog" aria-modal="true">
-      <form className={styles.modal} onSubmit={onSubmit}>
+      <form className={styles.modal} onSubmit={submit}>
         <h2 className={styles.title}>Set up your life calendar</h2>
-        <p className={styles.desc}>
+        <p className={styles.subtitle}>
           Enter your date of birth and (optional) life expectancy. You can
           change the expectancy later in Settings.
         </p>
 
-        <div className={styles.fieldGroup} aria-label="Date of birth">
-          <label className={styles.label}>Date of birth</label>
-          <div className={styles.dateRow} data-sep="/">
-            <input
-              ref={dayRef}
-              inputMode="numeric"
-              pattern="\d{2}"
-              placeholder="DD"
-              aria-label="Day"
-              className={styles.dateBox}
-              value={day}
-              onChange={onDayChange}
-              autoFocus
-            />
-            <span className={styles.sep}>/</span>
-            <input
-              ref={monthRef}
-              inputMode="numeric"
-              pattern="\d{2}"
-              placeholder="MM"
-              aria-label="Month"
-              className={styles.dateBox}
-              value={month}
-              onChange={onMonthChange}
-            />
-            <span className={styles.sep}>/</span>
-            <input
-              ref={yearRef}
-              inputMode="numeric"
-              pattern="\d{4}"
-              placeholder="YYYY"
-              aria-label="Year"
-              className={styles.dateBoxWide}
-              value={year}
-              onChange={onYearChange}
-            />
-          </div>
-          <small className={styles.hint}>Format: DD / MM / YYYY</small>
+        <label className={styles.label} htmlFor="dob">
+          Date of birth
+        </label>
+        <div className={styles.dateRow}>
+          <input
+            id="dob"
+            name="dob"
+            type="date"
+            className={styles.dateInput}
+            value={dateISO}
+            min={MIN_ISO}
+            max={TODAY_ISO}
+            onChange={(e) => setDateISO(e.target.value)}
+            required
+          />
+          <span className={styles.ageHint}>{ageText}</span>
         </div>
 
-        <div className={styles.fieldGroup}>
-          <label className={styles.label} htmlFor="expectancy">
-            Life expectancy (years)
-          </label>
+        <p className={styles.hint}>Format: YYYY-MM-DD</p>
+
+        <label className={styles.label} htmlFor="exp">
+          Life expectancy (years)
+        </label>
+        <div className={styles.expRow}>
           <input
-            id="expectancy"
+            id="exp"
+            name="exp"
             type="number"
+            inputMode="numeric"
+            className={styles.expInput}
+            value={expectancy}
             min={60}
             max={110}
-            step={1}
-            value={expectancy}
-            onChange={(e) => setExpectancy(Number(e.target.value))}
-            className={styles.numberInput}
+            onChange={(e) => setExp(Number(e.target.value || 0))}
           />
-          <small className={styles.hint}>Default: 80. Allowed: 60–110.</small>
+          <span className={styles.hintInline}>
+            Default: 80. Allowed: 60–110.
+          </span>
         </div>
 
-        {error && <p className={styles.error}>{error}</p>}
+        {error && (
+          <div className={styles.error} role="alert" aria-live="polite">
+            {error}
+          </div>
+        )}
 
         <div className={styles.actions}>
-          <button type="submit" className={styles.primary}>
+          <button className={styles.primary} type="submit">
             Confirm
           </button>
         </div>
