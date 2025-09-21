@@ -21,10 +21,7 @@ export default function MarksPanel() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  const data = useMemo(() => {
-    const _ = tick; // referencia explícita para que el linter acepte la dependencia
-    return listMarks();
-  }, [tick]);
+  const data = useMemo(() => listMarks(), [tick]);
 
   const tags = useMemo(() => {
     const s = new Set<string>();

@@ -40,7 +40,6 @@ export default function App() {
       window.removeEventListener("lifeweeks:marks-changed", onChange);
   }, []);
   const marksByIndex = useMemo(() => {
-    const _ = marksVersion; // referencia explícita para el linter
     return groupByWeekIndex(listMarks());
   }, [marksVersion]);
 
@@ -56,7 +55,6 @@ export default function App() {
       {!dob ? (
         <OnboardingModal
           onConfirmed={() => {
-            // más simple y sin estado extra: recarga para leer lo guardado
             location.reload();
           }}
         />

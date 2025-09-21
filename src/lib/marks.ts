@@ -1,16 +1,12 @@
-import { weeksBetween } from "./date";
 import type { LifeMark } from "./storage";
 
-export function computeWeekIndex(dobISO: string, dateISO: string): number {
-  return weeksBetween(dobISO, dateISO);
-}
-
+/** Agrupa las marcas por índice de semana */
 export function groupByWeekIndex(marks: LifeMark[]): Map<number, LifeMark[]> {
-  const m = new Map<number, LifeMark[]>();
-  for (const mk of marks) {
-    const arr = m.get(mk.weekIndex) ?? [];
-    arr.push(mk);
-    m.set(mk.weekIndex, arr);
+  const map = new Map<number, LifeMark[]>();
+  for (const m of marks) {
+    const bucket = map.get(m.weekIndex) ?? [];
+    bucket.push(m);
+    map.set(m.weekIndex, bucket);
   }
-  return m;
+  return map;
 }
