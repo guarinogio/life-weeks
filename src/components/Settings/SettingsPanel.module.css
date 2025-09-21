@@ -1,146 +1,105 @@
-/* Botón engranaje fijo */
-.gearBtn {
+/* FAB arriba-derecha (z alto); tema claro/oscuro */
+.root {
   position: fixed;
-  top: 16px;
   right: 16px;
-  z-index: 1100;
-
-  inline-size: 44px;
-  block-size: 44px;
+  top: 16px;
+  z-index: 90; /* por encima de botones, por debajo de sidebars */
+}
+.open {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
   display: grid;
   place-items: center;
-
-  border-radius: 999px;
-  border: 1px solid var(--c-border);
-  background: var(--c-bg);
-  color: var(--c-text);
-  cursor: pointer;
-
-  box-shadow:
-    0 2px 6px rgba(0, 0, 0, 0.12),
-    0 6px 16px rgba(0, 0, 0, 0.1);
-  transition:
-    transform 0.15s ease,
-    background-color 0.2s ease,
-    color 0.2s ease,
-    border-color 0.2s ease;
-}
-.gearBtn:hover {
-  transform: translateY(-1px);
-}
-.gearBtn:active {
-  transform: translateY(0);
-}
-.gearBtn:focus-visible {
-  outline: 2px solid var(--c-accent);
-  outline-offset: 2px;
+  border: 1px solid var(--fab-border, var(--border, #e5e5e5));
+  background: var(--fab-bg, var(--bg, #fff));
+  color: var(--fab-fg, var(--fg, #111));
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
 }
 
-@media print {
-  .gearBtn {
-    display: none;
-  }
-}
-
-/* Overlay root */
-.backdrop {
+/* Modal (sidebar de settings) por encima de todo lo demás */
+.modal {
   position: fixed;
   inset: 0;
-  z-index: 1090; /* por encima del contenido, por debajo del botón si se solapan */
+  z-index: 130;
 }
-
-/* SCRIM debajo del drawer */
-.scrim {
+.overlay {
   position: absolute;
   inset: 0;
-  z-index: 0;
-  background: color-mix(in oklab, black 45%, transparent);
-  border: none;
-  padding: 0;
-  cursor: default;
+  background: rgba(0, 0, 0, 0.4);
 }
 
-/* Drawer encima del scrim */
-.drawer {
+/* PANEL CON FONDO SÓLIDO (sin transparencia) */
+.panel {
   position: absolute;
-  top: 0;
   right: 0;
-  bottom: 0;
-  z-index: 1; /* superior al scrim */
+  top: 0;
+  height: 100%;
   width: min(420px, 92vw);
-  background: var(--c-bg);
-  color: var(--c-text);
-  border-left: 1px solid var(--c-border);
-  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.25);
-  padding: 16px;
+  background: #ffffff; /* sólido en claro */
+  color: #111111;
+  box-shadow: -6px 0 24px rgba(0, 0, 0, 0.25);
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-
-  animation: slideIn 0.18s ease-out both;
 }
-
-@keyframes slideIn {
-  from {
-    transform: translateX(8px);
-    opacity: 0.98;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
 .header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-}
-
-.title {
-  margin: 0;
-  font-size: 18px;
-}
-
-.close {
-  inline-size: 32px;
-  block-size: 32px;
-  display: grid;
-  place-items: center;
-  border-radius: 999px;
-  border: 1px solid var(--c-border);
-  background: var(--c-bg);
-  color: var(--c-text);
-  cursor: pointer;
-}
-
-.section h4 {
-  margin: 0 0 8px 0;
-  font-size: 14px;
-  color: var(--c-text-muted);
-}
-
-.row {
-  display: flex;
   align-items: center;
-  gap: 16px;
 }
-
+.close {
+  border: none;
+  background: transparent;
+  font-size: 22px;
+}
+.section {
+  margin-top: 16px;
+}
+.themeRow {
+  display: flex;
+  gap: 12px;
+}
 .radio {
   display: inline-flex;
   align-items: center;
   gap: 8px;
 }
-
 .danger {
-  border: 1px solid color-mix(in oklab, var(--c-accent) 40%, black 10%);
-  background: color-mix(in oklab, var(--c-accent) 12%, var(--c-bg));
-  color: var(--c-text);
-  padding: 10px 14px;
-  border-radius: 10px;
+  margin-top: 8px;
+  border: 1px solid var(--danger, #d32f2f);
+  background: transparent;
+  color: var(--danger, #d32f2f);
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+.upload {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--border, #d0d0d0);
+  padding: 6px 10px;
+  border-radius: 8px;
   cursor: pointer;
 }
+.upload input {
+  display: none;
+}
+.row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
 
-.danger:hover {
-  background: color-mix(in oklab, var(--c-accent) 18%, var(--c-bg));
+/* SOLID DARK THEME */
+:root[data-theme="dark"] .panel {
+  background: #0e1116; /* sólido en oscuro */
+  color: #e6edf3;
+  border-left: 1px solid #1f232a;
+}
+:root[data-theme="dark"] .open {
+  --fab-bg: #111;
+  --fab-fg: #fff;
+  --fab-border: #333;
 }

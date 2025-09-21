@@ -1,118 +1,79 @@
-.wrap {
-  width: 100%;
-  display: grid;
-  place-items: start center;
+/* Variables globales para colores del grid (soporta dark) */
+:global(:root) {
+  --lw-dot-past: #222; /* vivido */
+  --lw-dot-future: #bdbdbd; /* restante */
+  --lw-dot: #222;
+  --lw-accent: #2f6feb;
+  --lw-tip-bg: #fff;
+  --lw-tip-fg: #111;
+}
+:global(:root[data-theme="dark"]) {
+  /* En oscuro: pasado claro, restante más oscuro (no invertido visualmente) */
+  --lw-dot-past: #cfcfcf;
+  --lw-dot-future: #454545;
+  --lw-dot: var(--lw-dot-past);
+  --lw-accent: #58a6ff;
+  --lw-tip-bg: #111;
+  --lw-tip-fg: #eee;
+
+  /* Botón FAB (notas) en dark */
+  --fab-bg: #111;
+  --fab-fg: #fff;
+  --fab-border: #333;
+}
+
+.wrapper {
   position: relative;
 }
 
-.svg {
-  width: min(1200px, 100%);
-  height: auto;
-  display: block;
+.dot {
+  fill: var(--lw-dot);
+}
+.past {
+  fill: var(--lw-dot-past);
+}
+.future {
+  fill: var(--lw-dot-future);
 }
 
-/* ====== Dots / estados ====== */
-.dotPast {
-  fill: var(--c-past);
-  stroke: var(--c-past);
+/* Parpadeo azul para la semana actual */
+.blink {
+  animation: blink-blue 1s steps(2, start) infinite;
 }
-.dotFuture {
-  fill: transparent;
-  stroke: var(--c-future);
-}
-
-/* Punto actual: solo parpadeo de opacidad (sin mover/escala) */
-.dotCurrent {
-  fill: var(--c-current);
-  stroke: var(--c-current);
-  animation: blink 1.5s ease-in-out infinite;
-}
-
-@keyframes blink {
-  0%,
-  100% {
-    opacity: 1;
+@keyframes blink-blue {
+  0% {
+    fill: var(--lw-dot);
   }
   50% {
-    opacity: 0.55;
+    fill: var(--lw-accent);
+  }
+  100% {
+    fill: var(--lw-dot);
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .dotCurrent {
-    animation: none;
-  }
-}
-
-/* ====== Labels ====== */
-.weekNumber,
-.yearLabel {
-  fill: var(--c-text-muted);
-  font-family:
-    system-ui,
-    -apple-system,
-    Segoe UI,
-    Roboto,
-    Ubuntu,
-    Cantarell,
-    "Helvetica Neue",
-    Arial,
-    "Noto Sans",
-    "Apple Color Emoji",
-    "Segoe UI Emoji",
-    "Segoe UI Symbol";
-  font-variant-numeric: tabular-nums;
-  font-size: 11px;
-}
-.weekMajor {
-  font-weight: 600;
-}
-.weekMinor {
-  opacity: 0.85;
-}
-
-/* Mobile: mantener números visibles pero más pequeños */
-@media (max-width: 600px) {
-  .weekNumber {
-    font-size: 9px;
-  }
-  .yearLabel {
-    font-size: 10px;
-  }
-}
-
-/* ====== Tooltip flotante ====== */
 .tooltip {
-  position: fixed; /* posicionado desde el centro del círculo (viewport coords) */
-  transform: translate(-50%, -100%); /* centrar x y colocar arriba */
-  translate: 0 -8px; /* separación del punto */
-  z-index: 1000;
-  background: var(--c-bg);
-  color: var(--c-text);
-  border: 1px solid var(--c-border);
-  border-radius: 10px;
+  position: absolute;
+  transform: translate(-50%, -140%);
   padding: 6px 10px;
+  border-radius: 10px;
+  background: var(--lw-tip-bg);
+  color: var(--lw-tip-fg);
   font-size: 12px;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
-  pointer-events: auto;
-  max-width: min(80vw, 320px);
+  line-height: 1;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+  pointer-events: none;
+  white-space: nowrap;
 }
-
-/* ====== A11y: visually hidden ====== */
-.srOnly {
-  position: absolute !important;
+.sr {
+  position: absolute;
   width: 1px;
   height: 1px;
-  padding: 0;
-  margin: -1px;
   overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+  clip: rect(0 0 0 0);
 }
-
-/* Foco accesible (SVG) */
-circle:focus-visible {
-  outline: 2px solid var(--c-accent);
-  outline-offset: 2px;
+.markBadge {
+  pointer-events: none;
+  opacity: 0.95;
+  fill: var(--lw-accent);
 }

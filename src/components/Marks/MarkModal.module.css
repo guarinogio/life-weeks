@@ -1,0 +1,50 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.modal {
+  background: var(--bg, #ffffff);
+  color: var(--fg, #111111);
+  min-width: 320px;
+  max-width: 560px;
+  width: min(92vw, 560px);
+  max-height: 80vh;
+  overflow: auto;
+  border: 1px solid var(--border, #e5e5e5);
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+  padding: 16px;
+}
+.formRow {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 10px 0;
+}
+input,
+select,
+textarea {
+  border: 1px solid var(--border, #d0d0d0);
+  border-radius: 8px;
+  padding: 10px;
+  background: var(--input-bg, #fff);
+  color: inherit;
+}
+textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 14px;
+}
+h3 {
+  margin: 0 0 10px 0;
+}

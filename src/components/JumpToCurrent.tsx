@@ -1,52 +1,46 @@
+import { useCallback } from "react";
+
+import { weeksBetween } from "../lib/date";
+import { getDOB } from "../lib/storage";
 import styles from "./JumpToCurrent.module.css";
 
-type Focusable = HTMLElement | SVGElement;
-
 export default function JumpToCurrent() {
-  const onClick = () => {
-    const current = document.getElementById(
-      "current-week-dot",
-    ) as Focusable | null;
+  const onClick = useCallback(() => {
+    const dob = getDOB();
+    if (!dob) return;
+    const idx = weeksBetween(dob);
+    const el = document.querySelector<SVGCircleElement>(
+      `circle[data-idx="${idx}"]`,
+    );
+    if (!el) return;
 
-    if (current) {
-      current.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-        inline: "center",
-      });
-      // ambos (HTMLElement/SVGElement) tienen focus() tipado en lib.dom.d.ts
-      current.focus?.({ preventScroll: true });
-      return;
+    el.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+      inline: "center",
+    });
+
+    const svgEl = el as unknown as SVGElement;
+    if (typeof svgEl.focus === "function") {
+      svgEl.focus({ preventScroll: true });
     }
 
-    const svg = document.getElementById("life-grid-svg") as HTMLElement | null;
-    svg?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-      inline: "nearest",
-    });
-  };
+    el.classList.add(styles.flash);
+    window.setTimeout(() => el.classList.remove(styles.flash), 800);
+  }, []);
 
   return (
     <button
       className={styles.fab}
-      type="button"
-      aria-label="Jump to current week"
-      title="Jump to current week"
       onClick={onClick}
+      aria-label="Ir a la semana actual"
+      title="Ir a la semana actual"
     >
-      <TargetIcon />
+      <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="8.5" className={styles.iconRing} />
+        <circle cx="12" cy="12" r="1.8" className={styles.iconDot} />
+        <path d="M12 3v2M21 12h-2M12 19v2M5 12H3" className={styles.iconArms} />
+      </svg>
     </button>
-  );
-}
-
-function TargetIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
-      <path
-        fill="currentColor"
-        d="M11 2h2v3.06a7.002 7.002 0 0 1 5.94 5.94H22v2h-3.06a7.002 7.002 0 0 1-5.94 5.94V22h-2v-3.06A7.002 7.002 0 0 1 5.06 13H2v-2h3.06A7.002 7.002 0 0 1 11 5.06V2Zm1 5a5 5 0 1 0 .001 10.001A5 5 0 0 0 12 7Zm0 3a2 2 0 1 1-.001 4.001A2 2 0 0 1 12 10Z"
-      />
-    </svg>
   );
 }
