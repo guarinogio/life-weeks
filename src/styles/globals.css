@@ -1,12 +1,9 @@
-/* ====== Variables por defecto (desktop) ====== */
 :root {
-  /* layout (grid) */
   --cell-d: 14px;
   --cell-gap: 6px;
   --label-w: 36px;
   --label-gap: 8px;
 
-  /* colores (tema claro por defecto) */
   --c-bg: #ffffff;
   --c-text: #111827;
   --c-text-muted: #6b7280;
@@ -20,12 +17,11 @@
 
   --c-accent: #2563eb;
 
-  /* fab (botones flotantes) */
   --fab-size: 56px;
   --fab-bottom: 96px;
+  --fab-gap: 12px;
 }
 
-/* Tema oscuro */
 :root[data-theme="dark"] {
   --c-bg: #0f1115;
   --c-text: #e5e7eb;
@@ -41,21 +37,13 @@
   --c-accent: #60a5fa;
 }
 
-/* ====== Base ====== */
 *,
 *::before,
-*::after {
-  box-sizing: border-box;
-}
+*::after { box-sizing: border-box; }
 
-html,
-body,
-#root {
-  height: 100%;
-}
+html, body, #root { height: 100%; }
 
-html,
-body {
+html, body {
   margin: 0;
   padding: 0;
   max-width: 100%;
@@ -67,44 +55,16 @@ body {
 }
 
 body {
-  font-family:
-    system-ui,
-    -apple-system,
-    Segoe UI,
-    Roboto,
-    Ubuntu,
-    Cantarell,
-    "Helvetica Neue",
-    Arial,
-    "Noto Sans",
-    "Apple Color Emoji",
-    "Segoe UI Emoji",
-    "Segoe UI Symbol",
-    "Noto Color Emoji",
-    sans-serif;
+  font-family: system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial,"Noto Sans","Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji",sans-serif;
   line-height: 1.45;
 }
 
-/* Enlaces */
-a {
-  color: inherit;
-  text-decoration: none;
-}
-a:hover {
-  text-decoration: underline;
-}
+a { color: inherit; text-decoration: none; }
+a:hover { text-decoration: underline; }
 
-/* Utilidades pequeñas */
-.container {
-  width: min(1100px, 92vw);
-  margin-inline: auto;
-}
+.container { width: min(1100px, 92vw); margin-inline: auto; }
 
-hr {
-  border: 0;
-  border-top: 1px solid var(--c-grid);
-  margin: 12px 0;
-}
+hr { border: 0; border-top: 1px solid var(--c-grid); margin: 12px 0; }
 
 .visually-hidden {
   position: absolute !important;
@@ -118,11 +78,29 @@ hr {
   overflow: hidden;
 }
 
-/* ====== Ajustes para mobile ====== */
+/* Animación para el icono de sincronización */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spin { animation: spin 0.9s linear infinite; display: inline-flex; transform-origin: 50% 50%; }
+
+/* Colocación y tamaño unificados del botón “ir a la semana actual” */
+[data-role="jump-to-current"] {
+  position: fixed !important;
+  right: 16px !important;
+  bottom: var(--fab-bottom) !important;
+  width: var(--fab-size) !important;
+  height: var(--fab-size) !important;
+  min-width: var(--fab-size) !important;
+  min-height: var(--fab-size) !important;
+  border-radius: 50% !important;
+  padding: 0 !important;
+}
+
+/* ====== Mobile ====== */
 @media (max-width: 640px) {
   :root {
     --fab-size: 40px;
     --fab-bottom: 72px;
+    --fab-gap: 10px;
   }
 
   button[aria-label*="current" i],

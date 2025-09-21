@@ -3,6 +3,15 @@ import { exportData, importData, resetAll, getDOB, setDOB } from "../../lib/stor
 import { useI18n } from "../../i18n";
 import styles from "./SettingsPanel.module.css";
 import dialogStyles from "../Marks/ConfirmDialog.module.css";
+import {
+  getFirebaseState,
+  initFirebaseSync,
+  pullAndMerge,
+  pushSnapshot,
+  resetFromRemote,
+  signInFirebase,
+  signOutFirebase,
+} from "../../lib/firebaseSync";
 
 const THEME_KEY = "lifeweeks.theme";
 type Theme = "light" | "dark";
@@ -20,6 +29,12 @@ export default function SettingsPanel() {
   const [dobModal, setDobModal] = useState(false);
   const [dobISO, setDobISO] = useState<string>("");
 
+  const [driveSigned, setSigned] = useState(false); // reutilizo el nombre para no tocar i18n/estilos
+  const [driveEmail, setEmail] = useState<string | undefined>(undefined);
+  const [force, setForce] = useState(false);
+  const [showPushConfirm, setShowPushConfirm] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(false);
+
   useEffect(() => {
     const current = getDOB() || "";
     setDobISO(current);
@@ -29,6 +44,20 @@ export default function SettingsPanel() {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem(THEME_KEY, theme);
   }, [theme]);
+
+  useEffect(() => {
+    initFirebaseSync().then(() => {
+      const st = getFirebaseState();
+      setSigned(st.signedIn);
+      setEmail(st.email);
+    });
+  }, []);
+
+  async function refreshAuth() {
+    const st = getFirebaseState();
+    setSigned(st.signedIn);
+    setEmail(st.email);
+  }
 
   function onExport() {
     const data = exportData();
@@ -73,6 +102,33 @@ export default function SettingsPanel() {
     setDobModal(false);
     window.location.reload();
   }
+
+  async function onSignIn() {
+    await signInFirebase();
+    await refreshAuth();
+  }
+
+  async function onSignOut() {
+    await signOutFirebase();
+    await refreshAuth();
+  }
+
+  async function onPull() {
+    const r = await pullAndMerge(exportData, (json) => importData(json));
+    if (r.ok) window.location.reload();
+  }
+
+  async function onResetFromRemote() {
+    const r = await resetFromRemote((json) => importData(json));
+    if (r.ok) window.location.reload();
+  }
+
+  async function onPush(forceFlag: boolean) {
+    const r = await pushSnapshot(exportData, { force: forceFlag });
+    if (r.ok) setShowPushConfirm(false);
+  }
+
+  const advancedDisabled = !driveSigned;
 
   return (
     <div className={styles.root}>
@@ -136,6 +192,52 @@ export default function SettingsPanel() {
                 {t("resetSavedData")}
               </button>
             </div>
+
+            <div className={styles.section}>
+              <div className={styles.groupBox}>
+                <div className={styles.groupHeader}>
+                  <h4 style={{ margin: 0 }}>{t("sync")}</h4>
+                  <span className={`${styles.badge} ${driveSigned ? styles.statusOk : styles.statusWarn}`}>
+                    {driveSigned ? `${t("configured")} · ${driveEmail || ""}` : t("notConfigured")}
+                  </span>
+                </div>
+
+                <div className={styles.actionsRow}>
+                  {!driveSigned ? (
+                    <button className={styles.primary} onClick={onSignIn}>
+                      {t("signIn")}
+                    </button>
+                  ) : (
+                    <button className={styles.ghost} onClick={onSignOut}>
+                      {t("signOut")}
+                    </button>
+                  )}
+                </div>
+
+                <button
+                  className={`${styles.ghost} ${styles.advToggle}`}
+                  onClick={() => setShowAdvanced((v) => !v)}
+                  disabled={advancedDisabled}
+                >
+                  <span>Advanced</span>
+                  <span>{showAdvanced ? "▴" : "▾"}</span>
+                </button>
+
+                {showAdvanced && (
+                  <div className={styles.adv}>
+                    <div className={styles.actionsRow}>
+                      <button className={styles.ghost} onClick={onPull} disabled={!driveSigned}>{t("drivePull")}</button>
+                      <button className={styles.ghost} onClick={() => setShowPushConfirm(true)} disabled={!driveSigned}>{t("drivePush")}</button>
+                      <button className={styles.danger} onClick={onResetFromRemote} disabled={!driveSigned}>{t("driveResetFromDrive")}</button>
+                    </div>
+                    <label className={styles.inline}>
+                      <input type="checkbox" checked={force} onChange={(e) => setForce(e.target.checked)} />
+                      <span>{t("forceOverwrite")}</span>
+                    </label>
+                  </div>
+                )}
+              </div>
+            </div>
           </aside>
         </div>
       )}
@@ -160,6 +262,27 @@ export default function SettingsPanel() {
             <div className={dialogStyles.actions}>
               <button className={styles.ghost} onClick={() => setDobModal(false)}>{t("cancel")}</button>
               <button className={styles.primary} onClick={confirmDob}>{t("confirm")}</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showPushConfirm && (
+        <div className={dialogStyles.root} role="dialog" aria-modal="true" aria-label={t("pushConfirmTitle")}>
+          <div className={dialogStyles.overlay} onClick={() => setShowPushConfirm(false)} />
+          <div className={dialogStyles.panel} role="document" style={{ maxWidth: 420 }}>
+            <header className={dialogStyles.header}>
+              <h4>{t("pushConfirmTitle")}</h4>
+              <button className={dialogStyles.close} onClick={() => setShowPushConfirm(false)} aria-label={t("cancel")}>
+                ×
+              </button>
+            </header>
+            <div className={dialogStyles.body}>
+              <p>{t("pushConfirmBody")}</p>
+            </div>
+            <div className={dialogStyles.actions}>
+              <button className={styles.ghost} onClick={() => setShowPushConfirm(false)}>{t("cancel")}</button>
+              <button className={styles.primary} onClick={() => onPush(force)}>{t("confirm")}</button>
             </div>
           </div>
         </div>

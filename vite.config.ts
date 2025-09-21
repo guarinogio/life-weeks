@@ -9,15 +9,14 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: "autoUpdate", // <- el SW se revisa solo
+      registerType: "autoUpdate",
       injectRegister: "auto",
-      // manifest {...} tal como lo tienes
       workbox: {
-        globPatterns: ["**/*.{js,css,html,ico,png,svg}"],
-        navigateFallback: `${base}index.html`,
-        cleanupOutdatedCaches: true, // <- borra cachés viejas del build anterior
-        skipWaiting: true, // <- activa el SW nuevo inmediatamente
-        clientsClaim: true, // <- toma control de las pestañas abiertas
+        globPatterns: ["**/*.{js,css,html,ico,png,svg,webp,woff2,json}"],
+        navigateFallback: "index.html",
+        cleanupOutdatedCaches: true,
+        skipWaiting: true,
+        clientsClaim: true,
       },
     }),
   ],

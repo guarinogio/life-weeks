@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
+import React, { createContext, useCallback, useContext, useMemo, useState } from "react";
 
 export const messages = {
   en: {
@@ -42,7 +42,25 @@ export const messages = {
     setupIntro: "Enter your date of birth and (optional) life expectancy. You can change the expectancy later in Settings.",
     lifeExpectancyYearsLabel: "Life expectancy (years)",
     formatLabel: "Format",
-    dateFormatYMD: "YYYY-MM-DD"
+    dateFormatYMD: "YYYY-MM-DD",
+    sync: "Sync",
+    syncEnable: "Enable Google Drive sync",
+    signIn: "Sign in with Google",
+    signOut: "Sign out",
+    statusSignedInAs: "Signed in as",
+    advanced: "Advanced",
+    drivePull: "Pull from Drive",
+    drivePush: "Push to Drive",
+    driveResetFromDrive: "Reset with Drive data",
+    forceOverwrite: "Force overwrite",
+    quickPush: "Sync push",
+    pushConfirmTitle: "Confirm push",
+    pushConfirmBody: "Do you want to upload your local data to Google Drive?",
+    notConfigured: "Not configured",
+    configured: "Configured",
+    driveClientId: "Google Client ID",
+    driveApiKey: "Google API Key",
+    driveConfigSaved: "Drive config saved"
   },
   es: {
     past: "Pasadas",
@@ -85,7 +103,25 @@ export const messages = {
     setupIntro: "Ingresa tu fecha de nacimiento y la esperanza de vida (opcional). Luego puedes cambiar la esperanza en Ajustes.",
     lifeExpectancyYearsLabel: "Esperanza de vida (años)",
     formatLabel: "Formato",
-    dateFormatYMD: "AAAA-MM-DD"
+    dateFormatYMD: "AAAA-MM-DD",
+    sync: "Sincronización",
+    syncEnable: "Activar sincronización con Google Drive",
+    signIn: "Iniciar sesión con Google",
+    signOut: "Cerrar sesión",
+    statusSignedInAs: "Conectado como",
+    advanced: "Avanzados",
+    drivePull: "Pull desde Drive",
+    drivePush: "Push a Drive",
+    driveResetFromDrive: "Reset con datos de Drive",
+    forceOverwrite: "Forzar sobrescritura",
+    quickPush: "Push rápido",
+    pushConfirmTitle: "Confirmar push",
+    pushConfirmBody: "¿Quieres subir tus datos locales a Google Drive?",
+    notConfigured: "No configurado",
+    configured: "Configurado",
+    driveClientId: "Google Client ID",
+    driveApiKey: "Google API Key",
+    driveConfigSaved: "Configuración de Drive guardada"
   }
 } as const;
 
@@ -103,7 +139,7 @@ const storageKey = "lifeweeks:lang";
 
 function getInitialLang(): Lang {
   const fromStorage = typeof window !== "undefined" ? window.localStorage.getItem(storageKey) : null;
-  if (fromStorage === "en" || fromStorage === "es") return fromStorage;
+  if (fromStorage === "en" || fromStorage === "es") return fromStorage as Lang;
   return "es";
 }
 
@@ -115,7 +151,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   }, []);
   const t = useCallback((k: keyof typeof messages["en"]) => messages[lang][k], [lang]);
   const value = useMemo(() => ({ lang, setLang, t }), [lang, setLang, t]);
-  return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
+  return React.createElement(I18nContext.Provider, { value }, children);
 }
 
 export function useI18n() {
