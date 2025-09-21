@@ -3,6 +3,8 @@
   max-width: 900px;
   padding: 8px;
 }
+
+/* Header */
 .header {
   display: flex;
   justify-content: space-between;
@@ -10,10 +12,40 @@
   gap: 8px;
   margin-bottom: 8px;
 }
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.weekChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--chip-bg, #eef2ff);
+  color: var(--fg, #111);
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  border: 1px solid var(--border, #d0d7de);
+}
+.clearChip {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  opacity: 0.7;
+}
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Filtros */
 .filters {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+  margin-bottom: 8px;
 }
 .filters input,
 .filters select {
@@ -23,6 +55,26 @@
   padding: 8px 10px;
   border-radius: 10px;
 }
+
+/* Date range */
+.dateRange {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.rangeLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+.rangeLabel input {
+  min-width: 170px;
+}
+
+/* Lista */
 .list {
   list-style: none;
   padding: 0;
@@ -64,7 +116,14 @@
   justify-content: flex-end;
 }
 
-/* Botones light */
+/* Botones */
+.primary {
+  background: #2f6feb;
+  color: #fff;
+  border: 1px solid #2f6feb;
+  padding: 8px 12px;
+  border-radius: 10px;
+}
 .ghost {
   background: #fff;
   color: #111;
@@ -93,6 +152,9 @@
   color: #e6edf3;
   border-color: #2b313a;
 }
+:root[data-theme="dark"] .rangeLabel {
+  opacity: 1;
+}
 :root[data-theme="dark"] .item {
   background: #0e1116;
   border-color: #2b313a;
@@ -100,6 +162,16 @@
 :root[data-theme="dark"] .tag {
   background: #192334;
   color: #e6edf3;
+}
+:root[data-theme="dark"] .weekChip {
+  --chip-bg: #192334;
+  color: #e6edf3;
+  border-color: #2b313a;
+}
+:root[data-theme="dark"] .primary {
+  background: #58a6ff;
+  border-color: #58a6ff;
+  color: #0e1116;
 }
 :root[data-theme="dark"] .ghost {
   background: #0e1116;

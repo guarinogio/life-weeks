@@ -4,7 +4,6 @@ import InstallPrompt from "../components/InstallPrompt";
 import JumpToCurrent from "../components/JumpToCurrent";
 import Legend from "../components/Legend";
 import LifeGridSVG from "../components/LifeGridSVG/LifeGridSVG";
-import MarkModal from "../components/Marks/MarkModal";
 import MarksSidebar from "../components/Marks/MarksSidebar";
 import OnboardingModal from "../components/OnboardingModal/OnboardingModal";
 import SettingsPanel from "../components/Settings/SettingsPanel";
@@ -29,9 +28,6 @@ export default function App() {
     return ageBreakdown(dob);
   }, [dob]);
 
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedWeek, setSelectedWeek] = useState<number | null>(null);
-
   const [marksVersion, setMarksVersion] = useState(0);
   useEffect(() => {
     const onChange: EventListener = () => setMarksVersion((v) => v + 1);
@@ -43,12 +39,15 @@ export default function App() {
     return groupByWeekIndex(listMarks());
   }, [marksVersion]);
 
-  const openModalForWeek = (idx: number) => {
-    setSelectedWeek(idx);
-    setModalOpen(true);
-  };
-
+  // Sidebar de notas con filtro por semana
   const [showSidebar, setShowSidebar] = useState(false);
+  const [sidebarWeek, setSidebarWeek] = useState<number | null>(null);
+
+  // Doble click: abrir sidebar filtrado por esa semana
+  const onWeekDouble = (idx: number) => {
+    setSidebarWeek(idx);
+    setShowSidebar(true);
+  };
 
   return (
     <div className={styles.app}>
@@ -65,13 +64,17 @@ export default function App() {
           <LifeGridSVG
             birthDateISO={dob}
             years={expectancy}
-            onWeekDoubleClick={openModalForWeek}
+            onWeekDoubleClick={onWeekDouble}
             marksByIndex={marksByIndex}
           />
 
+          {/* FAB para abrir el sidebar sin filtro */}
           <button
             aria-label="Abrir notas e hitos"
-            onClick={() => setShowSidebar(true)}
+            onClick={() => {
+              setSidebarWeek(null);
+              setShowSidebar(true);
+            }}
             style={{
               position: "fixed",
               right: 16,
@@ -113,18 +116,14 @@ export default function App() {
           <JumpToCurrent />
           <InstallPrompt />
           <SettingsPanel />
+
           <MarksSidebar
             open={showSidebar}
             onClose={() => setShowSidebar(false)}
+            weekIndex={sidebarWeek}
           />
         </>
       )}
-
-      <MarkModal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        initial={selectedWeek != null ? { weekIndex: selectedWeek } : undefined}
-      />
     </div>
   );
 }

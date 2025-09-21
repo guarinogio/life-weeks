@@ -1,13 +1,19 @@
-import MarksPanel from "./MarksPanel";
+import MarksPanel, { type MarksPanelProps } from "./MarksPanel";
 import styles from "./MarksSidebar.module.css";
 
 type Props = {
   open: boolean;
   onClose: () => void;
+  weekIndex?: number | null; // filtro inicial por semana
 };
 
-export default function MarksSidebar({ open, onClose }: Props) {
+export default function MarksSidebar({ open, onClose, weekIndex }: Props) {
   if (!open) return null;
+
+  const panelProps: MarksPanelProps = {
+    weekIndexFilter: typeof weekIndex === "number" ? weekIndex : undefined,
+  };
+
   return (
     <div
       className={styles.modal}
@@ -28,7 +34,7 @@ export default function MarksSidebar({ open, onClose }: Props) {
           </button>
         </header>
         <div className={styles.content}>
-          <MarksPanel />
+          <MarksPanel {...panelProps} />
         </div>
       </aside>
     </div>
