@@ -1,4 +1,5 @@
 import { isoWeek, isoWeeksInYear } from "../lib/date";
+import { useI18n } from "../i18n";
 import styles from "./SummaryBar.module.css";
 
 type StatsLike = Partial<{
@@ -16,47 +17,38 @@ type Props = {
   age: { years: number; months: number; days: number };
 };
 
-function num(v: unknown): number | undefined {
-  return typeof v === "number" && Number.isFinite(v) ? v : undefined;
-}
-
 export default function SummaryBar({ stats, age }: Props) {
-  const lived =
-    num(stats.lived) ?? num(stats.weeksLived) ?? num(stats.livedWeeks) ?? 0;
+  const { t } = useI18n();
 
-  const totalDirect = num(stats.total) ?? num(stats.totalWeeks);
-  const remaining = num(stats.remaining) ?? num(stats.weeksRemaining);
-
-  const total = totalDirect ?? (lived + (remaining ?? 0) || Math.max(1, lived)); // fallback seguro ≥ 1
-
-  const pct = Math.round((lived / total) * 1000) / 10;
-
-  // Semana ISO actual y semanas totales del año en curso
-  const now = new Date();
-  const weekNow = isoWeek(now); // 1..52/53
-  const weeksInThisYear = isoWeeksInYear(now.getFullYear());
-  const remainingYear = Math.max(0, weeksInThisYear - weekNow);
+  const total = stats.total ?? stats.totalWeeks ?? 0;
+  const lived = stats.lived ?? stats.weeksLived ?? stats.livedWeeks ?? 0;
+  const remaining = stats.remaining ?? stats.weeksRemaining ?? Math.max(0, total - lived);
+  const percent = total > 0 ? (lived / total) * 100 : 0;
 
   const livedFmt = lived.toLocaleString();
   const totalFmt = total.toLocaleString();
-  const remainingFmt = (total - lived).toLocaleString();
+  const remainingFmt = remaining.toLocaleString();
+  const pct = percent.toFixed(1);
+
+  const weekNow = isoWeek(new Date());
+  const weeksInThisYear = isoWeeksInYear(new Date().getUTCFullYear());
+  const remainingYear = Math.max(0, weeksInThisYear - weekNow);
 
   return (
-    <section className={styles.bar}>
+    <section className={styles.bar} aria-live="polite">
       <p className={styles.line}>
-        You have lived <strong>{livedFmt}</strong> weeks out of{" "}
+        {t("youHaveLived")} <strong>{livedFmt}</strong> {t("weeksOutOf")}{" "}
         <strong>
           {totalFmt} ({pct}%)
         </strong>
-        . Remaining: <strong>{remainingFmt}</strong>.
+        . {t("remainingLabel")}: <strong>{remainingFmt}</strong>.
       </p>
       <p className={styles.sub}>
-        Age: {age.years} years, {age.months} months and {age.days} days.
+        {t("ageLabel")}: {age.years} {t("yearsLabel")}, {age.months} {t("monthsLabel")} {t("and")} {age.days} {t("daysLabel")}.
       </p>
       <p className={styles.sub}>
-        <span className={styles.yearLabel}>This year:</span> week{" "}
-        <strong>{weekNow}</strong> of <strong>{weeksInThisYear}</strong>.
-        Remaining: <strong>{remainingYear}</strong>.
+        <span className={styles.yearLabel}>{t("thisYearLabel")}:</span> {t("weekLabel")}{" "}
+        <strong>{weekNow}</strong> {t("ofLabel")} <strong>{weeksInThisYear}</strong>. {t("remainingLabel")}: <strong>{remainingYear}</strong>.
       </p>
     </section>
   );

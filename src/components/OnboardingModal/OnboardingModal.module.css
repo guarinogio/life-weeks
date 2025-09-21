@@ -1,110 +1,135 @@
-.backdrop {
+.root {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  display: grid;
-  place-items: center;
-  z-index: 140;
+  z-index: 120;
 }
 
-.modal {
-  width: min(720px, 94vw);
-  background: #ffffff;
-  color: #111111;
-  border: 1px solid #e5e5e5;
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
+}
+
+.panel {
+  position: relative;
+  margin: 10vh auto 0;
+  max-width: 640px;
+  width: calc(100% - 32px);
+  background: var(--bg, #fff);
+  color: var(--fg, #111);
+  border: 1px solid var(--border, #e5e5e5);
   border-radius: 16px;
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
-  padding: 22px 24px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.25);
+  padding: 20px 20px 16px;
 }
 
-h2 {
-  margin: 0 0 8px 0;
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 4px;
 }
-p {
-  margin: 0 0 16px 0;
-  opacity: 0.9;
+
+.title {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+.lang {
+  display: grid;
+  grid-auto-flow: column;
+  gap: 8px;
+  align-items: center;
+}
+
+.lang select {
+  border: 1px solid var(--border, #e5e5e5);
+  background: var(--bg, #fff);
+  color: var(--fg, #111);
+  border-radius: 10px;
+  padding: 6px 10px;
+  min-height: 36px;
+}
+
+.lead {
+  margin: 6px 0 12px 0;
+  opacity: 0.85;
+}
+
+.form {
+  display: grid;
+  gap: 16px;
 }
 
 .row {
-  margin: 12px 0;
+  display: grid;
+  gap: 8px;
 }
+
+.label {
+  font-weight: 600;
+}
+
 .inline {
   display: flex;
-  align-items: center;
   gap: 10px;
-}
-.sub {
-  opacity: 0.8;
-  font-size: 0.95rem;
-}
-.hint {
-  opacity: 0.7;
-  display: block;
-  margin-top: 6px;
-}
-.err {
-  color: #c62828;
-  margin-top: 6px;
-  display: block;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
-.modal input,
-.modal select,
-.modal textarea {
-  width: auto;
-  min-width: 180px;
-  border: 1px solid #d0d7de;
-  background: #ffffff;
-  color: #111111;
+.input {
+  border: 1px solid var(--border, #e5e5e5);
+  background: var(--bg, #fff);
+  color: var(--fg, #111);
   border-radius: 10px;
   padding: 8px 10px;
+  min-height: 38px;
 }
 
-/* Botón */
+.age {
+  opacity: 0.8;
+  white-space: nowrap;
+}
+
+.hint {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
 .actions {
-  margin-top: 18px;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
 }
+
 .primary {
-  background: #2f6feb;
+  background: #2b6cff;
   color: #fff;
-  border: 1px solid #2f6feb;
+  border: 1px solid #2b6cff;
+  border-radius: 10px;
   padding: 10px 16px;
-  border-radius: 12px;
-}
-.primary:disabled {
-  opacity: 0.6;
+  min-height: 40px;
 }
 
-/* ────────────────────────────── DARK THEME ───────────────────────────── */
-
-:root[data-theme="dark"] .modal {
+/* Dark theme */
+:root[data-theme="dark"] .panel {
   background: #0e1116;
   color: #e6edf3;
   border-color: #1f232a;
 }
 
-:root[data-theme="dark"] .modal input,
-:root[data-theme="dark"] .modal select,
-:root[data-theme="dark"] .modal textarea {
+:root[data-theme="dark"] .lang select,
+:root[data-theme="dark"] .input {
   background: #0e1116;
   color: #e6edf3;
   border-color: #2b313a;
-  /* mejora controles nativos (date/number) en dark */
-  color-scheme: dark;
 }
 
-/* icono del date picker en WebKit */
-:root[data-theme="dark"]
-  .modal
-  input[type="date"]::-webkit-calendar-picker-indicator {
-  filter: invert(1) opacity(0.85);
-}
-
-/* flechas del number mantienen contraste por color-scheme */
-
-/* botón en oscuro */
 :root[data-theme="dark"] .primary {
-  background: #58a6ff;
-  border-color: #58a6ff;
+  background: #4f7dff;
+  border-color: #4f7dff;
   color: #0e1116;
 }

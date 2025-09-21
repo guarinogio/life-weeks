@@ -12,11 +12,22 @@ import { ageBreakdown } from "../lib/date";
 import { groupByWeekIndex } from "../lib/marks";
 import { computeStats } from "../lib/stats";
 import { getDOB, getExpectancy, listMarks } from "../lib/storage";
+import { useI18n } from "../i18n";
 import styles from "./App.module.css";
 
 export default function App() {
-  const dob = getDOB();
-  const expectancy = getExpectancy();
+  const { t } = useI18n();
+  const [dob, setDob] = useState<string | null>(null);
+  const [expectancy, setExpectancy] = useState<number>(80);
+  const [marks, setMarks] = useState(() => listMarks());
+
+  useEffect(() => {
+    setDob(getDOB());
+    setExpectancy(getExpectancy());
+    const onMarks = () => setMarks(listMarks());
+    window.addEventListener("lifeweeks:marks-changed", onMarks as EventListener);
+    return () => window.removeEventListener("lifeweeks:marks-changed", onMarks as EventListener);
+  }, []);
 
   const stats = useMemo(() => {
     if (!dob) return {};
@@ -28,22 +39,11 @@ export default function App() {
     return ageBreakdown(dob);
   }, [dob]);
 
-  const [marksVersion, setMarksVersion] = useState(0);
-  useEffect(() => {
-    const onChange: EventListener = () => setMarksVersion((v) => v + 1);
-    window.addEventListener("lifeweeks:marks-changed", onChange);
-    return () =>
-      window.removeEventListener("lifeweeks:marks-changed", onChange);
-  }, []);
-  const marksByIndex = useMemo(() => {
-    return groupByWeekIndex(listMarks());
-  }, [marksVersion]);
+  const marksByIndex = useMemo(() => groupByWeekIndex(marks), [marks]);
 
-  // Sidebar de notas con filtro por semana
   const [showSidebar, setShowSidebar] = useState(false);
   const [sidebarWeek, setSidebarWeek] = useState<number | null>(null);
 
-  // Doble click: abrir sidebar filtrado por esa semana
   const onWeekDouble = (idx: number) => {
     setSidebarWeek(idx);
     setShowSidebar(true);
@@ -54,11 +54,16 @@ export default function App() {
       {!dob ? (
         <OnboardingModal
           onConfirmed={() => {
-            location.reload();
+            setDob(getDOB());
+            setExpectancy(getExpectancy());
           }}
         />
       ) : (
         <>
+          <header className={styles.header}>
+            <h1>{t("appTitle")}</h1>
+          </header>
+
           <SummaryBar stats={{ ...stats }} age={age} />
 
           <LifeGridSVG
@@ -68,9 +73,11 @@ export default function App() {
             marksByIndex={marksByIndex}
           />
 
-          {/* FAB para abrir el sidebar sin filtro */}
+          <Legend expectancy={expectancy} />
+
           <button
             aria-label="Abrir notas e hitos"
+            title="Notas e hitos"
             onClick={() => {
               setSidebarWeek(null);
               setShowSidebar(true);
@@ -88,31 +95,12 @@ export default function App() {
               boxShadow: "0 10px 30px rgba(0,0,0,.18)",
               display: "grid",
               placeItems: "center",
-              zIndex: 80,
+              cursor: "pointer",
             }}
           >
-            <svg
-              width="22"
-              height="22"
-              viewBox="0 0 24 24"
-              fill="none"
-              aria-hidden="true"
-            >
-              <path
-                d="M5 4h14a1 1 0 0 1 1 1v14l-4-3H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"
-                stroke="currentColor"
-                strokeWidth="1.6"
-              />
-              <path
-                d="M8 8h8M8 12h6"
-                stroke="currentColor"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-              />
-            </svg>
+            📝
           </button>
 
-          <Legend expectancy={expectancy} />
           <JumpToCurrent />
           <InstallPrompt />
           <SettingsPanel />

@@ -1,105 +1,174 @@
-/* FAB arriba-derecha (z alto); tema claro/oscuro */
 .root {
   position: fixed;
   right: 16px;
   top: 16px;
-  z-index: 90; /* por encima de botones, por debajo de sidebars */
+  z-index: 90;
 }
+
 .open {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  display: grid;
-  place-items: center;
-  border: 1px solid var(--fab-border, var(--border, #e5e5e5));
-  background: var(--fab-bg, var(--bg, #fff));
-  color: var(--fab-fg, var(--fg, #111));
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  text-align: center;
+  font-size: 18px;
+  border: 1px solid var(--border, #e5e5e5);
+  background: var(--bg, #fff);
+  color: var(--fg, #111);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
-/* Modal (sidebar de settings) por encima de todo lo demás */
-.modal {
+.portal {
   position: fixed;
   inset: 0;
-  z-index: 130;
+  z-index: 100;
 }
+
 .overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.32);
+  backdrop-filter: blur(2px);
 }
 
-/* PANEL CON FONDO SÓLIDO (sin transparencia) */
 .panel {
   position: absolute;
-  right: 0;
-  top: 0;
-  height: 100%;
-  width: min(420px, 92vw);
-  background: #ffffff; /* sólido en claro */
-  color: #111111;
-  box-shadow: -6px 0 24px rgba(0, 0, 0, 0.25);
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
+  right: 16px;
+  top: 16px;
+  width: min(380px, calc(100vw - 32px));
+  background: var(--bg, #ffffff);
+  color: var(--fg, #111111);
+  border: 1px solid var(--border, #e5e5e5);
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+  padding: 16px;
 }
+
 .header {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
-}
-.close {
-  border: none;
-  background: transparent;
-  font-size: 22px;
-}
-.section {
-  margin-top: 16px;
-}
-.themeRow {
-  display: flex;
-  gap: 12px;
-}
-.radio {
-  display: inline-flex;
-  align-items: center;
   gap: 8px;
-}
-.danger {
-  margin-top: 8px;
-  border: 1px solid var(--danger, #d32f2f);
-  background: transparent;
-  color: var(--danger, #d32f2f);
-  padding: 6px 10px;
-  border-radius: 8px;
-}
-.upload {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  border: 1px solid var(--border, #d0d0d0);
-  padding: 6px 10px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-.upload input {
-  display: none;
-}
-.row {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
   margin-bottom: 8px;
 }
 
-/* SOLID DARK THEME */
-:root[data-theme="dark"] .panel {
-  background: #0e1116; /* sólido en oscuro */
-  color: #e6edf3;
-  border-left: 1px solid #1f232a;
+.close {
+  appearance: none;
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-size: 20px;
+  line-height: 1;
+  padding: 4px 8px;
+  border-radius: 8px;
 }
+
+.section {
+  display: grid;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.row {
+  display: grid;
+  gap: 8px;
+}
+
+.inline {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.radio {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.panel input,
+.panel select,
+.panel button {
+  font: inherit;
+}
+
+.panel input[type="date"],
+.panel select {
+  border: 1px solid var(--border, #e5e5e5);
+  background: var(--bg, #ffffff);
+  color: var(--fg, #111111);
+  border-radius: 10px;
+  padding: 8px 10px;
+  min-height: 38px;
+}
+
+.panel button {
+  border-radius: 10px;
+  padding: 8px 12px;
+  border: 1px solid var(--border, #e5e5e5);
+  background: var(--bg, #ffffff);
+  color: var(--fg, #111111);
+  min-height: 38px;
+}
+
+.primary {
+  background: var(--fg, #111111);
+  color: var(--bg, #ffffff);
+  border: 1px solid var(--fg, #111111);
+}
+
+.ghost {
+  background: var(--bg, #ffffff);
+  color: var(--fg, #111111);
+}
+
+.panel .danger,
+.danger {
+  background: #e55353;
+  color: #ffffff;
+  border: 1px solid #e55353;
+}
+
+/* Tema oscuro */
 :root[data-theme="dark"] .open {
-  --fab-bg: #111;
-  --fab-fg: #fff;
-  --fab-border: #333;
+  background: #111111;
+  color: #ffffff;
+  border-color: #333333;
+}
+
+:root[data-theme="dark"] .panel {
+  background: #0e1116;
+  color: #e6edf3;
+  border-color: #1f232a;
+}
+
+:root[data-theme="dark"] .panel input[type="date"],
+:root[data-theme="dark"] .panel select {
+  background: #0e1116;
+  color: #e6edf3;
+  border-color: #2b313a;
+}
+
+:root[data-theme="dark"] .panel button {
+  background: #0e1116;
+  color: #e6edf3;
+  border-color: #2b313a;
+}
+
+:root[data-theme="dark"] .primary {
+  background: #e6edf3;
+  color: #0e1116;
+  border-color: #e6edf3;
+}
+
+/* Dejar esta regla al final para ganar especificidad */
+:root[data-theme="dark"] .panel .danger,
+:root[data-theme="dark"] .danger {
+  background: #ff6b6b;
+  color: #0e1116;
+  border-color: #ff6b6b;
 }

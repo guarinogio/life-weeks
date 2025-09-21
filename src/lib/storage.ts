@@ -116,6 +116,11 @@ export function importData(json: string): void {
   emitMarksChanged();
 }
 
+export function clearMarks(): void {
+  localStorage.removeItem(KEY_MARKS);
+  emitMarksChanged();
+}
+
 export function resetAll(): void {
   localStorage.removeItem(KEY_DOB);
   localStorage.removeItem(KEY_EXPECTANCY);
