@@ -6,8 +6,8 @@
 }
 
 .open {
-  width: 44px;
-  height: 44px;
+  width: var(--fab-size);
+  height: var(--fab-size);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -133,7 +133,6 @@
   border: 1px solid #e55353;
 }
 
-/* Tema oscuro */
 :root[data-theme="dark"] .open {
   background: #111111;
   color: #ffffff;
@@ -165,10 +164,20 @@
   border-color: #e6edf3;
 }
 
-/* Dejar esta regla al final para ganar especificidad */
-:root[data-theme="dark"] .panel .danger,
 :root[data-theme="dark"] .danger {
   background: #ff6b6b;
   color: #0e1116;
   border-color: #ff6b6b;
+}
+
+@media (max-width: 640px) {
+  .panel {
+    right: 10px;
+    top: 10px;
+    width: min(360px, calc(100vw - 20px));
+    padding: 12px;
+  }
+  .open {
+    font-size: 16px;
+  }
 }

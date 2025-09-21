@@ -1,10 +1,10 @@
 /* ====== Variables por defecto (desktop) ====== */
 :root {
   /* layout (grid) */
-  --cell-d: 14px; /* diámetro de cada círculo (desktop) */
-  --cell-gap: 6px; /* separación entre columnas/filas */
-  --label-w: 36px; /* ancho de la columna de años (izquierda) */
-  --label-gap: 8px; /* separación número de año → puntos */
+  --cell-d: 14px;
+  --cell-gap: 6px;
+  --label-w: 36px;
+  --label-gap: 8px;
 
   /* colores (tema claro por defecto) */
   --c-bg: #ffffff;
@@ -19,6 +19,10 @@
   --c-dot-future: #d1d5db;
 
   --c-accent: #2563eb;
+
+  /* fab (botones flotantes) */
+  --fab-size: 56px;
+  --fab-bottom: 96px;
 }
 
 /* Tema oscuro */
@@ -55,7 +59,7 @@ body {
   margin: 0;
   padding: 0;
   max-width: 100%;
-  overflow-x: hidden; /* evita overflow horizontal del documento */
+  overflow-x: hidden;
   background: var(--c-bg);
   color: var(--c-text);
   -webkit-font-smoothing: antialiased;
@@ -112,4 +116,24 @@ hr {
   clip: rect(0 0 0 0);
   clip-path: inset(50%);
   overflow: hidden;
+}
+
+/* ====== Ajustes para mobile ====== */
+@media (max-width: 640px) {
+  :root {
+    --fab-size: 40px;
+    --fab-bottom: 72px;
+  }
+
+  button[aria-label*="current" i],
+  button[aria-label*="actual" i],
+  [data-role="jump-to-current"] {
+    width: var(--fab-size) !important;
+    height: var(--fab-size) !important;
+    min-width: var(--fab-size) !important;
+    min-height: var(--fab-size) !important;
+    font-size: 16px !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+  }
 }

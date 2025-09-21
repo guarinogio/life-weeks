@@ -76,7 +76,7 @@ export default function App() {
           <Legend expectancy={expectancy} />
 
           <button
-            aria-label="Abrir notas e hitos"
+            aria-label="Notas e hitos"
             title="Notas e hitos"
             onClick={() => {
               setSidebarWeek(null);
@@ -85,18 +85,22 @@ export default function App() {
             style={{
               position: "fixed",
               right: 16,
-              bottom: 96,
-              width: 56,
-              height: 56,
+              bottom: "var(--fab-bottom)",
+              width: "var(--fab-size)",
+              height: "var(--fab-size)",
+              minWidth: "var(--fab-size)",
+              minHeight: "var(--fab-size)",
               borderRadius: "50%",
-              border: "1px solid var(--fab-border, var(--border, #e5e5e5))",
-              background: "var(--fab-bg, var(--bg, #fff))",
-              color: "var(--fab-fg, var(--fg, #111))",
+              border: "1px solid var(--fab-border, var(--c-border))",
+              background: "var(--fab-bg, var(--c-bg))",
+              color: "var(--fab-fg, var(--c-text))",
               boxShadow: "0 10px 30px rgba(0,0,0,.18)",
               display: "grid",
               placeItems: "center",
               cursor: "pointer",
+              padding: 0
             }}
+            className="notes-fab"
           >
             📝
           </button>
