@@ -28,13 +28,11 @@
     "lint:ci": "eslint . --ext .ts,.tsx --max-warnings=0",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "clean": "rm -rf dist",
-    "prepare": "husky"
+    "clean": "rm -rf dist"
   },
   "dependencies": {
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
-    "firebase": "^12.3.0",
     "framer-motion": "^12.23.12",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"

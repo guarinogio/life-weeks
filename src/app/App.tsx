@@ -10,48 +10,43 @@ import SummaryBar from "../components/SummaryBar";
 import { ageBreakdown } from "../lib/date";
 import { groupByWeekIndex } from "../lib/marks";
 import { computeStats } from "../lib/stats";
-import { getDOB, getExpectancy, listMarks, exportData, importData } from "../lib/storage";
+import { getDOB, getExpectancy, listMarks } from "../lib/storage";
 import { useI18n } from "../i18n";
 import styles from "./App.module.css";
-import dialogStyles from "../components/Marks/ConfirmDialog.module.css";
-import { getFirebaseState, initFirebaseSync, pullAndMerge, pushSnapshot } from "../lib/firebaseSync";
 
 export default function App() {
   const { t } = useI18n();
+
   const [dob, setDob] = useState<string | null>(null);
   const [expectancy, setExpectancy] = useState<number>(80);
   const [marks, setMarks] = useState(() => listMarks());
-  const [showPushConfirm, setShowPushConfirm] = useState(false);
-  const [isPushing, setIsPushing] = useState(false);
-  const [syncTick, setSyncTick] = useState(0);
+
+  // Para forzar refresco del Sidebar de notas tras guardar/editar/borrar
+  const [marksTick, setMarksTick] = useState(0);
+
+  // Para ocultar el botón "Current" cuando Ajustes está abierto
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   useEffect(() => {
     setDob(getDOB());
     setExpectancy(getExpectancy());
-    const onMarks = () => setMarks(listMarks());
+
+    const onMarks = () => {
+      setMarks(listMarks());
+      setMarksTick((n) => n + 1);
+    };
     window.addEventListener("lifeweeks:marks-changed", onMarks as EventListener);
-    const onStorage = () => setSyncTick((n) => n + 1);
-    window.addEventListener("storage", onStorage);
+
+    const onOpen = () => setSettingsOpen(true);
+    const onClose = () => setSettingsOpen(false);
+    window.addEventListener("settings:open", onOpen as EventListener);
+    window.addEventListener("settings:close", onClose as EventListener);
+
     return () => {
       window.removeEventListener("lifeweeks:marks-changed", onMarks as EventListener);
-      window.removeEventListener("storage", onStorage);
+      window.removeEventListener("settings:open", onOpen as EventListener);
+      window.removeEventListener("settings:close", onClose as EventListener);
     };
-  }, []);
-
-  useEffect(() => {
-    initFirebaseSync().then(() => {
-      const st = getFirebaseState();
-      if (st.signedIn) {
-        pullAndMerge(exportData, (json) => importData(json)).then((r) => {
-          if (r && r.ok) {
-            setDob(getDOB());
-            setExpectancy(getExpectancy());
-            setMarks(listMarks());
-            setSyncTick((n) => n + 1);
-          }
-        });
-      }
-    });
   }, []);
 
   const stats = useMemo(() => {
@@ -74,17 +69,6 @@ export default function App() {
     setShowSidebar(true);
   };
 
-  async function doQuickPush() {
-    setIsPushing(true);
-    try {
-      const r = await pushSnapshot(exportData);
-      if (r.ok) setShowPushConfirm(false);
-    } finally {
-      setIsPushing(false);
-      setSyncTick((n) => n + 1);
-    }
-  }
-
   const fabBase = {
     position: "fixed" as const,
     right: 16,
@@ -94,20 +78,14 @@ export default function App() {
     minHeight: "var(--fab-size)",
     borderRadius: "50%",
     border: "1px solid var(--fab-border, var(--c-border))",
-    background: "var(--fab-bg, var(--c-bg))",
-    color: "var(--fab-fg, var(--c-text))",
+    background: "var(--c-bg)",
+    color: "var(--c-text)",
     boxShadow: "0 10px 30px rgba(0,0,0,.18)",
     display: "grid",
     placeItems: "center",
     cursor: "pointer",
     padding: 0,
   };
-
-  const canSync = (() => {
-    void syncTick;
-    const st = getFirebaseState();
-    return Boolean(st.signedIn);
-  })();
 
   return (
     <div className={styles.app}>
@@ -135,37 +113,6 @@ export default function App() {
 
           <Legend expectancy={expectancy} />
 
-          {canSync && (
-            <button
-              aria-label={t("quickPush")}
-              title={t("quickPush")}
-              onClick={() => setShowPushConfirm(true)}
-              style={{
-                ...fabBase,
-                bottom: `calc(var(--fab-bottom) + (var(--fab-size) + var(--fab-gap)) * 2)`,
-              }}
-            >
-              <span className={isPushing ? "spin" : ""} style={{ lineHeight: 0, display: "inline-flex" }}>
-                <svg
-                  viewBox="0 0 24 24"
-                  width="22"
-                  height="22"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <polyline points="23 4 23 10 17 10"></polyline>
-                  <polyline points="1 20 1 14 7 14"></polyline>
-                  <path d="M3.51 9a9 9 0 0114.13-3.36L23 10"></path>
-                  <path d="M1 14l5.37 4.36A9 9 0 0020.49 15"></path>
-                </svg>
-              </span>
-            </button>
-          )}
-
           <button
             aria-label="Notas e hitos"
             title="Notas e hitos"
@@ -181,36 +128,21 @@ export default function App() {
             📝
           </button>
 
-          <JumpToCurrent />
-          <InstallPrompt />
-          <SettingsPanel />
+          {/* Oculta "Current" si el panel de notas o el de ajustes están abiertos */}
+          {!showSidebar && !settingsOpen && <JumpToCurrent />}
 
+          <InstallPrompt />
+
+          {/* Oculta el botón/portal de Ajustes cuando el sidebar de notas está visible */}
+          {!showSidebar && <SettingsPanel />}
+
+          {/* Remontar el sidebar cuando cambian las notas: key=marksTick */}
           <MarksSidebar
+            key={marksTick}
             open={showSidebar}
             onClose={() => setShowSidebar(false)}
             weekIndex={sidebarWeek}
           />
-
-          {canSync && showPushConfirm && (
-            <div className={dialogStyles.root} role="dialog" aria-modal="true" aria-label={t("pushConfirmTitle")}>
-              <div className={dialogStyles.overlay} onClick={() => setShowPushConfirm(false)} />
-              <div className={dialogStyles.panel} role="document" style={{ maxWidth: 420 }}>
-                <header className={dialogStyles.header}>
-                  <h4>{t("pushConfirmTitle")}</h4>
-                  <button className={dialogStyles.close} onClick={() => setShowPushConfirm(false)} aria-label={t("cancel")}>
-                    ×
-                  </button>
-                </header>
-                <div className={dialogStyles.body}>
-                  <p>{t("pushConfirmBody")}</p>
-                </div>
-                <div className={dialogStyles.actions}>
-                  <button className={styles.ghost} onClick={() => setShowPushConfirm(false)}>{t("cancel")}</button>
-                  <button className={styles.primary} onClick={doQuickPush}>{t("confirm")}</button>
-                </div>
-              </div>
-            </div>
-          )}
         </>
       )}
     </div>
