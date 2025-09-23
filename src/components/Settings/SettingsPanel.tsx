@@ -31,11 +31,8 @@ export default function SettingsPanel() {
   }, [theme]);
 
   useEffect(() => {
-    if (open) {
-      window.dispatchEvent(new CustomEvent("settings:open"));
-    } else {
-      window.dispatchEvent(new CustomEvent("settings:close"));
-    }
+    if (open) window.dispatchEvent(new CustomEvent("settings:open"));
+    else window.dispatchEvent(new CustomEvent("settings:close"));
   }, [open]);
 
   function onExport() {
@@ -70,10 +67,6 @@ export default function SettingsPanel() {
     window.location.reload();
   }
 
-  function openDobModal() {
-    setDobModal(true);
-  }
-
   function confirmDob() {
     if (!dobISO || isNaN(new Date(dobISO).getTime())) return;
     setDOB(dobISO);
@@ -85,7 +78,10 @@ export default function SettingsPanel() {
   return (
     <div className={styles.root}>
       <button className={styles.open} aria-label={t("openSettings")} onClick={() => setOpen(true)}>
-        ⚙️
+        <svg className={styles.openIcon} viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M11.05 2.5a1 1 0 0 1 1.9 0l.35 1.4a7.5 7.5 0 0 1 2.07.85l1.28-.74a1 1 0 0 1 1.36.37l1 1.73a1 1 0 0 1-.36 1.36l-1.2.69a7.6 7.6 0 0 1 0 2.22l1.2.69a1 1 0 0 1 .36 1.36l-1 1.73a1 1 0 0 1-1.36.37l-1.28-.74a7.5 7.5 0 0 1-2.07.85l-.35 1.4a1 1 0 0 1-1.9 0l-.35-1.4a7.5 7.5 0 0 1-2.07-.85l-1.28.74a1 1 0 0 1-1.36-.37l-1-1.73a1 1 0 0 1 .36-1.36l1.2-.69a7.6 7.6 0 0 1 0-2.22l-1.2-.69a1 1 0 0 1-.36-1.36l1-1.73a1 1 0 0 1 1.36-.37l1.28.74a7.5 7.5 0 0 1 2.07-.85l.35-1.4Z" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+          <circle cx="12" cy="12" r="3.25" strokeWidth="1.8"/>
+        </svg>
       </button>
 
       {open && (
@@ -94,9 +90,7 @@ export default function SettingsPanel() {
           <aside className={styles.panel} role="document">
             <header className={styles.header}>
               <h3>{t("settings")}</h3>
-              <button className={styles.close} aria-label={t("close")} onClick={() => setOpen(false)}>
-                ×
-              </button>
+              <button className={styles.close} aria-label={t("close")} onClick={() => setOpen(false)}>×</button>
             </header>
 
             <div className={styles.content}>
@@ -135,7 +129,7 @@ export default function SettingsPanel() {
                   <div className={styles.row}>
                     <div className={styles.inline}>
                       <input type="date" value={dobISO} readOnly />
-                      <button className={styles.primary} onClick={openDobModal}>{t("editDob")}</button>
+                      <button className={styles.primary} onClick={() => setDobModal(true)}>{t("editDob")}</button>
                     </div>
                   </div>
                 </div>
@@ -173,9 +167,7 @@ export default function SettingsPanel() {
           <div className={dialogStyles.panel} role="document" style={{ maxWidth: 420 }}>
             <header className={dialogStyles.header}>
               <h4>{t("editDob")}</h4>
-              <button className={dialogStyles.close} onClick={() => setDobModal(false)} aria-label={t("cancel")}>
-                ×
-              </button>
+              <button className={dialogStyles.close} onClick={() => setDobModal(false)} aria-label={t("cancel")}>×</button>
             </header>
             <div className={dialogStyles.body}>
               <p>{t("editDobWarning")}</p>

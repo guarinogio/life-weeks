@@ -16,32 +16,24 @@ import styles from "./App.module.css";
 
 export default function App() {
   const { t } = useI18n();
-
   const [dob, setDob] = useState<string | null>(null);
   const [expectancy, setExpectancy] = useState<number>(80);
   const [marks, setMarks] = useState(() => listMarks());
-
-  // Para forzar refresco del Sidebar de notas tras guardar/editar/borrar
   const [marksTick, setMarksTick] = useState(0);
-
-  // Para ocultar el botón "Current" cuando Ajustes está abierto
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   useEffect(() => {
     setDob(getDOB());
     setExpectancy(getExpectancy());
-
     const onMarks = () => {
       setMarks(listMarks());
       setMarksTick((n) => n + 1);
     };
     window.addEventListener("lifeweeks:marks-changed", onMarks as EventListener);
-
     const onOpen = () => setSettingsOpen(true);
     const onClose = () => setSettingsOpen(false);
     window.addEventListener("settings:open", onOpen as EventListener);
     window.addEventListener("settings:close", onClose as EventListener);
-
     return () => {
       window.removeEventListener("lifeweeks:marks-changed", onMarks as EventListener);
       window.removeEventListener("settings:open", onOpen as EventListener);
@@ -69,13 +61,13 @@ export default function App() {
     setShowSidebar(true);
   };
 
-  const fabBase = {
-    position: "fixed" as const,
+  const fabBase: React.CSSProperties = {
+    position: "fixed",
     right: 16,
-    width: "var(--fab-size)",
-    height: "var(--fab-size)",
-    minWidth: "var(--fab-size)",
-    minHeight: "var(--fab-size)",
+    width: "clamp(44px, 9vw, 56px)",
+    height: "clamp(44px, 9vw, 56px)",
+    minWidth: "44px",
+    minHeight: "44px",
     borderRadius: "50%",
     border: "1px solid var(--fab-border, var(--c-border))",
     background: "var(--c-bg)",
@@ -85,6 +77,15 @@ export default function App() {
     placeItems: "center",
     cursor: "pointer",
     padding: 0,
+    lineHeight: 0
+  };
+
+  const iconStyle: React.CSSProperties = {
+    width: "clamp(18px, 4.2vw, 22px)",
+    height: "clamp(18px, 4.2vw, 22px)",
+    display: "block",
+    stroke: "currentColor",
+    fill: "none"
   };
 
   return (
@@ -122,21 +123,21 @@ export default function App() {
             }}
             style={{
               ...fabBase,
-              bottom: `calc(var(--fab-bottom) + (var(--fab-size) + var(--fab-gap)) * 1)`,
+              bottom: `calc(var(--fab-bottom, 16px) + (clamp(44px, 9vw, 56px) + var(--fab-gap, 10px)) * 1)`
             }}
           >
-            📝
+            <svg viewBox="0 0 24 24" aria-hidden="true" style={iconStyle}>
+              <path d="M4 3.5h9.5a2 2 0 0 1 2 2V9H4V3.5Z" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M4 9h13.5V18a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9Z" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M7.5 13h6M7.5 16h4" strokeWidth="1.8" strokeLinecap="round"/>
+            </svg>
           </button>
 
-          {/* Oculta "Current" si el panel de notas o el de ajustes están abiertos */}
           {!showSidebar && !settingsOpen && <JumpToCurrent />}
 
           <InstallPrompt />
-
-          {/* Oculta el botón/portal de Ajustes cuando el sidebar de notas está visible */}
           {!showSidebar && <SettingsPanel />}
 
-          {/* Remontar el sidebar cuando cambian las notas: key=marksTick */}
           <MarksSidebar
             key={marksTick}
             open={showSidebar}
